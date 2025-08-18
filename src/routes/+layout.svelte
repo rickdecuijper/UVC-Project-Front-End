@@ -19,6 +19,7 @@
 				<li>
 					<a href="/clients" class:font-bold={page.url.pathname === '/clients'}> Clients </a>
 				</li>
+				<li><a href="/requests" class:font-bold={page.url.pathname === '/requests'}> Requests </a></li>
 			</ul>
 		</nav>
 	</header>
