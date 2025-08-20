@@ -1,12 +1,11 @@
 <script>
 	let {
-		appointment = {
-			timeslot: 900,
-			client: 'John Doe'
+		client = {
+			name: 'John Doe'
 		}
 	} = $props();
 </script>
 
-<li>
-	<p>{appointment.timeslot} - {appointment.client}</p>
+<li class="p-2">
+	<a class="underline" href="#">{client.name}</a>
 </li>
