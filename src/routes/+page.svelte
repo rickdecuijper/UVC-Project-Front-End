@@ -8,7 +8,7 @@
 	// data is the reserved word for getting data from the server page (+page.js)
 	let { data } = $props();
 
-	
+	// Context used for shared state and updating state
 	const selectedClient = $state({ state: "pending", name:"Donald", breed:"Duck" });
 	function setClient(newClient) { selectedClient.client = newClient; }
 	setContext('selectedClient', selectedClient);

@@ -5,18 +5,15 @@
 	// using destructuring
 	// downfall - not every property is guaranteed to be present or even visible
 	let { appointment } = $props();
+	// OPTION 2 - USE CONTEXT (currently active)
 	const setClient = getContext('setClient');
 	
-	console.log(getContext('selectedClient'));
-
 	const displayAppointmentDetails = (appointment) => {
 		console.log('Displaying appointment details for:', appointment);
 		
 		// OPTION 1 - SHARED STATE: updates the shared state with ClientDetail
 		// setClient(appointment);
-		// OPTION 2 - USE CONTEXT
-		
-		console.log('Selected client set to:', appointment);
+		// OPTION 2 - USE CONTEXT (currently active)
 		setClient(appointment);
 	};
 
