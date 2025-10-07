@@ -6,7 +6,7 @@
 	// downfall - not every property is guaranteed to be present or even visible
 	let { appointment } = $props();
 	// OPTION 2 - USE CONTEXT (currently active)
-	const setClient = getContext('setClient');
+	let selectedClient = getContext('selectedClient');
 	
 	const displayAppointmentDetails = (appointment) => {
 		console.log('Displaying appointment details for:', appointment);
@@ -14,7 +14,8 @@
 		// OPTION 1 - SHARED STATE: updates the shared state with ClientDetail
 		// setClient(appointment);
 		// OPTION 2 - USE CONTEXT (currently active)
-		setClient(appointment);
+		selectedClient.client = appointment;
+		console.log('selectedClient updated to:', selectedClient);
 	};
 
 </script>

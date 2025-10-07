@@ -1,4 +1,5 @@
 <script>
+	import { getContext } from 'svelte';
 	// OPTION 1 - via 
 	// import { selectedClient } from '$lib/app.svelte.js';
 	import { findEmoji } from '$lib/helpers/emoijs.js';
@@ -7,8 +8,10 @@
 	// $inspect('ClientDetail.svelte', selectedClient);
 	
 	// OPTION 2 - USE CONTEXT (currently active)
-	let { selectedClient } = $props();
-	console.log(selectedClient);
+	let selectedClient = getContext('selectedClient');
+	// let { selectedClient } = $props();
+
+	console.log('Woop',selectedClient);
 
 </script>
 

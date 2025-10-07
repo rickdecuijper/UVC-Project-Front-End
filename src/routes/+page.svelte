@@ -1,7 +1,7 @@
 <script>
 	import Appointment from '$lib/components/Appointment.svelte';
 	import ClientDetail from '$lib/components/ClientDetail.svelte';
-	
+
 	import { setContext } from 'svelte';
 	//let selectedClient = $state({ client: undefined });
 
@@ -9,11 +9,9 @@
 	let { data } = $props();
 
 	// Context used for shared state and updating state
-	const selectedClient = $state({ state: "pending", name:"Donald", breed:"Duck" });
-	function setClient(newClient) { selectedClient.client = newClient; }
+	const selectedClient = $state({ client: undefined});
 	setContext('selectedClient', selectedClient);
-	setContext('setClient', setClient);
-
+	//setContext('setClient', setClient);
 </script>
 
 <section class="container mx-auto w-full">
@@ -27,12 +25,13 @@
 		<div class="basis-4/6 rounded-lg bg-slate-50 p-10 lg:mr-8">
 			<div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
 				{#each data.scheduleToDay as appointment}
-					<Appointment appointment={appointment} />
+					<Appointment {appointment} />
 				{/each}
 			</div>
 		</div>
-		<aside id="details" class="relative basis-2/6 rounded-lg bg-slate-50 p-10 mt-20 lg:mt-0">
-			<ClientDetail selectedClient={selectedClient} />
+		<aside id="details" class="relative mt-20 basis-2/6 rounded-lg bg-slate-50 p-10 lg:mt-0">
+			<ClientDetail />
+			<!-- <ClientDetail selectedClient={selectedClient} /> -->
 		</aside>
 	</main>
 </section>
