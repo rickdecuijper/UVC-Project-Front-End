@@ -1,7 +1,4 @@
-# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
-
-name: Node.js CI
+name: CI – Build & Test Svelte App
 
 on:
   push:
@@ -11,21 +8,37 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: [18.x, 20.x, 22.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-
     steps:
-    - uses: actions/checkout@v4
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    - run: npm ci
-    - run: npm run build --if-present
-    - run: npm test
+      # Checkout repository
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Use Node version (prefers .nvmrc if available)
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          node-version: 20
+          cache: 'npm'
+
+      # Install dependencies
+      - name: Install dependencies
+        run: npm ci
+
+      # Build Svelte app
+      - name: Build project
+        run: npm run build
+
+      # Run tests
+      - name: Run tests
+        run: npm test
+
+      # Upload build artifacts (optional but useful)
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: svelte-build
+          path: build
+          retention-days: 7
