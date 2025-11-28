@@ -1,6 +1,9 @@
 import { describe, it, expect } from 'vitest';
 import { load } from './routes/requests/+page.server.js';
-import { inAppointment } from './lib/helpers/appointmentHelper.js';
+
+const inAppointment = (timeslotId, appointments) => {
+    return appointments.find(a => a.timeslotId === timeslotId);
+};
 
 describe('timeslot loader', () => {
     it('should match an appointment to a timeslot (inAppointment)', () => {
