@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { load } from 'src/routes/requests/+page.server.js';
-import { inAppointment } from '$lib/helpers/appointmentHelper.js';
+import { load } from './routes/requests/+page.server.js';
+import { inAppointment } from './lib/helpers/appointmentHelper.js';
 
 describe('timeslot loader', () => {
     it('should match an appointment to a timeslot (inAppointment)', () => {
@@ -19,7 +19,6 @@ describe('timeslot loader', () => {
             { id: 2, timeslotId: 2, name: 'Mickey' }
         ];
 
-        // Hier kun je load() eventueel mocken als nodig
         const result = { scheduleToDay: mockAppointments.map(a => ({ ...a })) };
 
         expect(result.scheduleToDay[1].name).toBe('Mickey');
