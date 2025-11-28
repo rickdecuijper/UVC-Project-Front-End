@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { load } from '../path/to/your/file.js';
+import { load } from '../src/routes/+page.server.js';
 
 // Mock helpers
 vi.mock('$lib/helpers/ajaxhelper.js', () => ({
