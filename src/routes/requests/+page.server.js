@@ -22,3 +22,10 @@ export const load = async () => {
         return { error };
     }
 };
+
+/**
+ * Helper to match appointments to timeslots (required by test)
+ */
+export function inAppointment(timeslotId, appointments) {
+    return appointments.find(a => a.timeslotId === timeslotId);
+}
