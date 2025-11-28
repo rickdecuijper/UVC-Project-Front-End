@@ -11,7 +11,6 @@ import { getData, getPromisesData } from '$lib/helpers/ajaxhelper.js';
 
 describe('timeslot loader', () => {
 
-```
 it('should match an appointment to a timeslot (inAppointment)', async () => {
 	const { inAppointment } = await import('../path/to/your/file.js');
 
@@ -59,7 +58,6 @@ it('should assign appointment: undefined when none exist', async () => {
 
 	expect(result.scheduleToDay[0].appointment).toBeUndefined();
 });
-```
 
 });
 
