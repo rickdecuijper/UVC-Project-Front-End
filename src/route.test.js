@@ -1,6 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { load } from '../src/routes/+page.server.js';
-
+import { load } from './routes/requests/create/+page.server.js';
 // Mock helpers
 vi.mock('$lib/helpers/ajaxhelper.js', () => ({
 getData: vi.fn(),
