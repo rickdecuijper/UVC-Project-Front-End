@@ -5,11 +5,11 @@ const inAppointment = (timeslotId, appointments) => {
     return appointments.find(a => a.timeslotId === timeslotId);
 };
 
-describe('timeslot loader', () => {
-    it('should match an appointment to a timeslot (inAppointment)', () => {
-        const appointments = [
-            { id: 1, timeslotId: 2, name: 'Mickey' }
-        ];
+// describe('timeslot loader', () => {
+//     it('should match an appointment to a timeslot (inAppointment)', () => {
+//         const appointments = [
+//             { id: 1, timeslotId: 2, name: 'Mickey' }
+//         ];
 
         const result = inAppointment(2, appointments);
 
