@@ -34,6 +34,12 @@ jobs:
       # Run tests
       - name: Run tests
         run: npm test
+        
+      - name: Run ESLint
+        run: npm run lint
+      
+      - name: ESLint GitHub Annotations
+        run: eslint . -f github
 
       # Upload build artifacts (optional but useful)
       - name: Upload build artifact
@@ -44,8 +50,6 @@ jobs:
           path: build
           retention-days: 7
 
-      - name: Run ESLint
-        run: npm run lint
       # 🚨 Notify Discord on FAILURE
       - name: Notify Discord on failure
         if: failure()
