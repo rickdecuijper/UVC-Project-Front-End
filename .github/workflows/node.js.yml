@@ -44,6 +44,8 @@ jobs:
           path: build
           retention-days: 7
 
+      - name: Run ESLint
+        run: npm run lint
       # 🚨 Notify Discord on FAILURE
       - name: Notify Discord on failure
         if: failure()
