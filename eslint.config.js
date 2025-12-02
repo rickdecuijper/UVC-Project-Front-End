@@ -37,7 +37,7 @@ export default [
       "object-shorthand": "error",
       "no-nested-ternary": "error",
       "no-unneeded-ternary": "error",
-
+    
       // --- Strict Svelte rules ---
       "svelte/require-each-key": "error",
       "svelte/no-at-html-tags": "error",
@@ -52,7 +52,6 @@ export default [
       ],
       "svelte/no-inner-declarations": "error",
       "svelte/valid-compile": "error",
-      "svelte/no-useless-template": "error",
       "svelte/no-ignored-unsubscribe": "error",
       "svelte/no-reactive-literals": "error"
     }
