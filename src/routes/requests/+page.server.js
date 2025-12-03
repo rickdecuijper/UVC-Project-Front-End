@@ -1,4 +1,4 @@
-import { getData } from "$lib/helpers/ajaxhelper";
+import { getData } from "../lib/helpers/ajaxhelper";
 import { PUBLIC_API_URL } from "$env/static/public";
 
 /**
