@@ -11,10 +11,8 @@
 		"check": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json --watch",
 		"format": "prettier --write . && eslint . --fix",
-  		"scripts": {
-		  "lint:soft": "eslint . || true",
-		  "lint:strict": "eslint . --max-warnings=0"
-		},
+		"lint:soft": "eslint . || true",
+		"lint:strict": "eslint . --max-warnings=0"
 		"test:unit": "vitest",
 		"test": "npm run test:unit -- --run"
 	},
