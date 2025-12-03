@@ -2,17 +2,17 @@ import path from 'path';
 import tailwindcss from '@tailwindcss/vite';
 import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vite';
-import { getData } from '$lib/helpers/ajaxhelper';
 
 export default defineConfig({
   plugins: [tailwindcss(), sveltekit()],
   resolve: {
     alias: {
-      $lib: path.resolve('./src/lib')  // <- This maps $lib to src/lib
+      // Use __dirname to make it absolute
+      $lib: path.resolve(__dirname, 'src/lib')
     }
   },
   server: {
-    host: '0.0.0.0',  // Docker accessibility
+    host: '0.0.0.0',
     port: 4173
   },
   test: {
