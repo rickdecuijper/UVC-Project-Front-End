@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { load } from './routes/requests/+page.server.js';
-import { getData } from 'src/lib/helpers/ajaxhelper';
+import { getData } from '../../lib/helpers/ajaxhelper.js';
 
 const inAppointment = (timeslotId, appointments) => {
     return appointments.find(a => a.timeslotId === timeslotId);
