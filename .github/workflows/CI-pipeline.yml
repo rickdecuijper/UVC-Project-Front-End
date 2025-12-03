@@ -1,4 +1,4 @@
-name: CI – Build & Test Svelte App
+name: CI – Build, Test & Containerize Svelte App
 
 on:
   push:
@@ -59,6 +59,17 @@ jobs:
           name: svelte-build
           path: build
           retention-days: 7
+
+      # 🔥 2.4 — Build Docker container
+      - name: Build Docker Image
+        run: docker build -t uvc-frontend:latest .
+
+      # 🔥 2.4 — Run container to verify it works
+      - name: Run Container Smoke Test
+        run: |
+          docker run -d -p 4173:4173 --name testapp uvc-frontend:latest
+          sleep 5
+          curl -f http://localhost:4173 || exit 1
 
       # 🔟 Notify Discord on failure
       - name: Notify Discord on failure
