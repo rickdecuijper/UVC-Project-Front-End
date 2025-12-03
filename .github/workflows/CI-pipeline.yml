@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
         run:
-          working-directory: ./UVC-Project-Front-End
+          working-directory: ${{ github.workspace }}
     steps:
       # 1️⃣ Checkout repository
       - uses: actions/checkout@v4
