@@ -1,13 +1,57 @@
+// import path from 'path';
+// import tailwindcss from '@tailwindcss/vite';
+// import { sveltekit } from '@sveltejs/kit/vite';
+// import { defineConfig } from 'vite';
+
+// export default defineConfig({
+//   plugins: [tailwindcss(), sveltekit()],
+//   resolve: {
+//     alias: {
+//       // Use process.cwd() to make it absolute
+//       $lib: path.resolve(process.cwd(), 'src/lib')
+//     }
+//   },
+//   server: {
+//     host: '0.0.0.0',
+//     port: 4173
+//   },
+//   test: {
+//     expect: { requireAssertions: true },
+//     projects: [
+//       {
+//         name: 'client',
+//         environment: 'browser',
+//         browser: {
+//           enabled: true,
+//           provider: 'playwright',
+//           instances: [{ browser: 'chromium' }]
+//         },
+//         include: ['src/**/*.svelte.{test,spec}.{js,ts}'],
+//         exclude: ['src/lib/server/**'],
+//         setupFiles: ['./vitest-setup-client.js']
+//       },
+//       {
+//         name: 'server',
+//         environment: 'node',
+//         include: ['src/**/*.{test,spec}.{js,ts}'],
+//         exclude: ['src/**/*.svelte.{test,spec}.{js,ts}']
+//       }
+//     ]
+//   }
+// });
 import path from 'path';
 import tailwindcss from '@tailwindcss/vite';
 import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vite';
 
+// Detect if running in CI environment
+const isCI = !!process.env.CI;
+
 export default defineConfig({
   plugins: [tailwindcss(), sveltekit()],
   resolve: {
     alias: {
-      // Use process.cwd() to make it absolute
+      // Absolute path for $lib
       $lib: path.resolve(process.cwd(), 'src/lib')
     }
   },
@@ -17,15 +61,19 @@ export default defineConfig({
   },
   test: {
     expect: { requireAssertions: true },
+    globals: true, // allows describe, it, expect without imports
+    environment: 'node', // default environment
     projects: [
       {
         name: 'client',
-        environment: 'browser',
-        browser: {
-          enabled: true,
-          provider: 'playwright',
-          instances: [{ browser: 'chromium' }]
-        },
+        environment: isCI ? 'happy-dom' : 'browser', // Use real browser locally, lightweight in CI
+        browser: isCI
+          ? undefined
+          : {
+              enabled: true,
+              provider: 'playwright',
+              instances: [{ browser: 'chromium' }]
+            },
         include: ['src/**/*.svelte.{test,spec}.{js,ts}'],
         exclude: ['src/lib/server/**'],
         setupFiles: ['./vitest-setup-client.js']
@@ -39,3 +87,4 @@ export default defineConfig({
     ]
   }
 });
+
