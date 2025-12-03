@@ -8,7 +8,7 @@ export default defineConfig({
   resolve: {
     alias: {
       // Use process.cwd() to make it absolute
-      $lib: path.resolve(process.cwd(), 'src/lib')
+      $lib: path.resolve(process.cwd(), './src/lib')
     }
   },
   server: {
