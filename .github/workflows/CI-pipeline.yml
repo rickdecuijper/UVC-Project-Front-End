@@ -36,6 +36,8 @@ jobs:
       # 5️⃣ Build SvelteKit project
       - run: npm run build
 
+      - run: ls .
+
       # 6️⃣ Run tests with coverage
       - run: npm run test -- --coverage
 
