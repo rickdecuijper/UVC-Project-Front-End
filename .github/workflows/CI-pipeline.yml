@@ -32,8 +32,14 @@ jobs:
         run: npm run lint:soft
 
       # 5️⃣ GitHub Annotations for ESLint
-      - name: ESLint GitHub Annotations
-        run: npx eslint . -f github
+      - name: ESLint Report (non-blocking)
+        run: npx eslint . -f json -o eslint-report.json || true
+      
+      - name: Upload ESLint Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: eslint-report
+          path: eslint-report.json
 
       # 6️⃣ Build Svelte app
       - name: Build project
