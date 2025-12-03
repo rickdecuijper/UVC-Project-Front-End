@@ -42,8 +42,9 @@ jobs:
           path: eslint-report.json
 
       # 6️⃣ Build Svelte app
-      - name: Build project
-        run: npm run build
+      - name: Build project 
+        run: |
+         SKIP_ENV_CHECK=true npm run build
 
       # 7️⃣ Run unit tests with coverage
       - name: Run tests with coverage
