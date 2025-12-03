@@ -1,11 +1,17 @@
-import adapter from '@sveltejs/adapter-auto';
+import adapter from '@sveltejs/adapter-node';
 
-const config = {
+export default {
   kit: {
     adapter: adapter({
-  out: 'build'
-})
+      out: 'build',       // optional
+      precompress: false,
+      envPrefix: 'VITE_'
+    }),
+    vite: {
+      server: {
+        host: '0.0.0.0',  // <--- make server accessible outside container
+        port: 4173
+      }
+    }
   }
 };
-
-export default config;
