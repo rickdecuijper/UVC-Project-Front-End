@@ -33,7 +33,7 @@ jobs:
 
       # 5️⃣ GitHub Annotations for ESLint
       - name: ESLint GitHub Annotations
-        run: eslint . -f github
+        run: npx eslint . -f github
 
       # 6️⃣ Build Svelte app
       - name: Build project
