@@ -2,20 +2,20 @@ name: CI – Build & Test Svelte App
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout repository
+      # 1️⃣ Checkout repository
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Use Node version (prefers .nvmrc if available)
+      # 2️⃣ Set up Node.js
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
@@ -23,28 +23,44 @@ jobs:
           node-version: 20
           cache: 'npm'
 
-      # Install dependencies
+      # 3️⃣ Install dependencies
       - name: Install dependencies
         run: npm ci
 
-      # Build Svelte app
+      # 4️⃣ Run ESLint + Prettier
+      - name: Run ESLint
+        run: npm run lint
+
+      # 5️⃣ GitHub Annotations for ESLint
+      - name: ESLint GitHub Annotations
+        run: eslint . -f github
+
+      # 6️⃣ Build Svelte app
       - name: Build project
         run: npm run build
 
-      # Run tests
-      - name: Run tests
-        run: npm test
+      # 7️⃣ Run unit tests with coverage
+      - name: Run tests with coverage
+        run: npm run test -- --coverage
 
-      # Upload build artifacts (optional but useful)
+      # 8️⃣ Upload coverage artifact
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage
+          retention-days: 7
+
+      # 9️⃣ Upload build artifact
       - name: Upload build artifact
-        if: success()   # Only upload if everything worked
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: svelte-build
           path: build
           retention-days: 7
 
-      # 🚨 Notify Discord on FAILURE
+      # 🔟 Notify Discord on failure
       - name: Notify Discord on failure
         if: failure()
         run: |
