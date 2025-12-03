@@ -12,75 +12,56 @@ jobs:
 
     steps:
       # 1️⃣ Checkout repository
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       # 2️⃣ Set up Node.js
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version-file: '.nvmrc'
           node-version: 20
           cache: 'npm'
 
-      # 3️⃣ Install dependencies
-      - name: Install dependencies
-        run: npm ci
+      # 3️⃣ Install dependencies (including @sveltejs/adapter-node)
+      - run: npm ci
 
-      # 4️⃣ Run ESLint + Prettier
-      - name: Run ESLint
-        run: npm run lint:soft
+      # 4️⃣ Run ESLint safely
+      - run: npx eslint . -f json -o eslint-report.json || true
 
-      # 5️⃣ GitHub Annotations for ESLint
-      - name: ESLint Report (non-blocking)
-        run: npx eslint . -f json -o eslint-report.json || true
-      
-      - name: Upload ESLint Report
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
           name: eslint-report
           path: eslint-report.json
 
-      # 6️⃣ Build Svelte app
-      - name: Build project 
-        run: |
-         SKIP_ENV_CHECK=true npm run build
+      # 5️⃣ Build SvelteKit project
+      - run: SKIP_ENV_CHECK=true npm run build
 
-      # 7️⃣ Run unit tests with coverage
-      - name: Run tests with coverage
-        run: npm run test -- --coverage
+      # 6️⃣ Run tests with coverage
+      - run: npm run test -- --coverage
 
-      # 8️⃣ Upload coverage artifact
-      - name: Upload coverage report
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
           name: coverage-report
           path: coverage
           retention-days: 7
 
-      # 9️⃣ Upload build artifact
-      - name: Upload build artifact
-        if: success()
+      # 7️⃣ Upload build artifact
+      - if: success()
         uses: actions/upload-artifact@v4
         with:
           name: svelte-build
           path: build
           retention-days: 7
 
-      # 🔥 2.4 — Build Docker container
-      - name: Build Docker Image
-        run: docker build -t uvc-frontend:latest .
+      # 8️⃣ Build Docker container
+      - run: docker build -t uvc-frontend:latest .
 
-      # 🔥 2.4 — Run container to verify it works
-      - name: Run Container Smoke Test
-        run: |
+      # 9️⃣ Smoke test Docker container
+      - run: |
           docker run -d -p 4173:4173 --name testapp uvc-frontend:latest
           sleep 5
           curl -f http://localhost:4173 || exit 1
 
       # 🔟 Notify Discord on failure
-      - name: Notify Discord on failure
-        if: failure()
+      - if: failure()
         run: |
           curl -H "Content-Type: application/json" \
             -X POST \
