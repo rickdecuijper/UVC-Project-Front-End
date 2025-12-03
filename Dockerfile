@@ -15,5 +15,5 @@ COPY --from=builder /app/build ./build
 COPY package*.json ./
 RUN npm install --omit=dev
 
-EXPOSE 5501
+EXPOSE 4173
 CMD ["npm", "run", "preview"]
