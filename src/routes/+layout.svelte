@@ -21,7 +21,7 @@
             <nav>
                 <ul class="flex space-x-4 text-sm font-medium">
                     <li><a href="/schatkaart"> Schatkaart </a></li>
-                    <li><a href="/"> Kalender </a></li>
+                    <li><a href="/kalender"> Kalender </a></li>
                     <li><a href="#"> Avatar </a></li>
                 </ul>
             </nav>
