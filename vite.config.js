@@ -7,8 +7,8 @@ export default defineConfig({
   plugins: [tailwindcss(), sveltekit()],
   resolve: {
     alias: {
-      // Use __dirname to make it absolute
-      $lib: path.resolve(process.cwd(), 'src/lib') 
+      // Use absolute path based on current working directory
+      $lib: path.resolve(__dirname, 'src/lib')
     }
   },
   server: {
@@ -17,15 +17,11 @@ export default defineConfig({
   },
   test: {
     expect: { requireAssertions: true },
+    globals: true, // allow using Vitest globals like `describe` & `it`
     projects: [
       {
         name: 'client',
-        environment: 'browser',
-        browser: {
-          enabled: true,
-          provider: 'playwright',
-          instances: [{ browser: 'chromium' }]
-        },
+        environment: 'happy-dom', // simpler browser env; change to 'playwright' if needed
         include: ['src/**/*.svelte.{test,spec}.{js,ts}'],
         exclude: ['src/lib/server/**'],
         setupFiles: ['./vitest-setup-client.js']
