@@ -9,7 +9,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
+    defaults:
+        run:
+          working-directory: ./UVC-Project-Front-End
     steps:
       # 1️⃣ Checkout repository
       - uses: actions/checkout@v4
