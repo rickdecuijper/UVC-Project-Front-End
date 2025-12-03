@@ -1,18 +1,18 @@
+import path from 'path';
 import tailwindcss from '@tailwindcss/vite';
 import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vite';
-import path from 'path'; // <-- add this
 
 export default defineConfig({
   plugins: [tailwindcss(), sveltekit()],
-  server: {
-    host: '0.0.0.0',
-    port: 4173
-  },
   resolve: {
     alias: {
-      $lib: path.resolve('./src/lib') // <-- add this
+      $lib: path.resolve('./src/lib')  // <- This maps $lib to src/lib
     }
+  },
+  server: {
+    host: '0.0.0.0',  // Docker accessibility
+    port: 4173
   },
   test: {
     expect: { requireAssertions: true },
