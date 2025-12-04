@@ -1,5 +1,4 @@
 import { getData } from "../../lib/helpers/ajaxhelper";
-import { PUBLIC_API_URL } from "../../../.env.production";
 
 /**
  * Function to load appointments
