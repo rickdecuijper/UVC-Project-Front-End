@@ -1,5 +1,4 @@
 // import { error } from '@sveltejs/kit';
-import { PUBLIC_API_URL } from '$env/static/public';
 import { getData, getPromisesData } from '$lib/helpers/ajaxhelper';
 
 // used api routes
