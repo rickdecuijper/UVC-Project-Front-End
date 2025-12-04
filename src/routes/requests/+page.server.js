@@ -1,4 +1,5 @@
 import { getData } from "../../lib/helpers/ajaxhelper";
+import.meta.env.VITE_PUBLIC_API_URL
 
 /**
  * Function to load appointments
