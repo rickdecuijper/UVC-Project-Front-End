@@ -1,7 +1,5 @@
 import { getData } from "../../lib/helpers/ajaxhelper";
-import { env } from '$env/dynamic/public';
-
-const PUBLIC_API_URL = env.PUBLIC_API_URL;
+import.meta.env.PUBLIC_API_URL;
 /**
  * Function to load appointments
  */
