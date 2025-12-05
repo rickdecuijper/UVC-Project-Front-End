@@ -1,8 +1,6 @@
 // import { error } from '@sveltejs/kit';
 import { getData, getPromisesData } from '$lib/helpers/ajaxhelper';
-import { env } from '$env/dynamic/public';
-
-const PUBLIC_API_URL = env.PUBLIC_API_URL;
+import.meta.env.PUBLIC_API_URL;
 
 // used api routes
 const timeSlotsApiRoute = `${PUBLIC_API_URL}/timeslots`;
