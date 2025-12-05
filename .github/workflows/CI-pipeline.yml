@@ -34,9 +34,10 @@ jobs:
           path: eslint-report.json
 
       # 5️⃣ Build SvelteKit project
-      - run: npm run build
-
-      - run: ls ./src
+      - name: Build
+        run: npm run build
+        env:
+          VITE_PUBLIC_API_URL: ${{ secrets.VITE_PUBLIC_API_URL }}
 
       # 6️⃣ Run tests with coverage
       - run: npm run test -- --coverage
