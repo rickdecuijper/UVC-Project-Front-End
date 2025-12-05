@@ -7,7 +7,6 @@ export default defineConfig({
   plugins: [tailwindcss(), sveltekit()],
   resolve: {
     alias: {
-      // Use process.cwd() to make it absolute
       $lib: path.resolve(process.cwd(), './src/lib')
     }
   },
@@ -16,31 +15,33 @@ export default defineConfig({
     port: 4173
   },
   test: {
-  expect: { requireAssertions: true },
-  projects: [
-    {
-      name: 'client',
-      environment: 'browser',
-      browser: {
-        enabled: true,
-        provider: 'playwright',
-        instances: [{ browser: 'chromium' }]
+    expect: { requireAssertions: true },
+    projects: [
+      {
+        name: 'client',
+        environment: 'browser',
+        browser: {
+          enabled: true,
+          provider: 'playwright',
+          instances: [{ browser: 'chromium' }]
+        },
+        include: ['src/**/*.svelte.{test,spec}.{js,ts}'],
+        exclude: ['src/lib/server/**'],
+        setupFiles: ['./vitest-setup-client.js']
       },
-      include: ['src/**/*.svelte.{test,spec}.{js,ts}'],
-      exclude: ['src/lib/server/**'],
-      setupFiles: ['./vitest-setup-client.js']
-    },
-    {
-      name: 'server',
-      environment: 'node',
-      include: ['src/**/*.{test,spec}.{js,ts}'],
-      exclude: ['src/**/*.svelte.{test,spec}.{js,ts}'],
-      setupFiles: ['./vitest-env-mock.js'],
-      alias: {
-        '$env/static/public': path.resolve('./vitest-env-mock.js'),
-        '$env/dynamic/public': path.resolve('./vitest-env-mock.js')
+      {
+        name: 'server',
+        environment: 'node',
+        include: ['src/**/*.{test,spec}.{js,ts}'],
+        exclude: ['src/**/*.svelte.{test,spec}.{js,ts}'],
+        setupFiles: ['./vitest-env-mock.js'],
+        resolve: {
+          alias: {
+            '$env/static/public': path.resolve('./vitest-env-mock.js'),
+            '$env/dynamic/public': path.resolve('./vitest-env-mock.js')
+          }
+        }
       }
-    }
-  ]
-}
-
+    ]
+  }
+});
