@@ -58,7 +58,7 @@ jobs:
 
       # 8️⃣ Build Docker container
       - name: run docker build
-        run: docker build --build-arg PUBLIC_API_URL=${{ secrets.VITE_PUBLIC_API_URL }} -t uvc-frontend:latest .
+        run: docker build --build-arg PUBLIC_API_URL=${{ secrets.PUBLIC_API_URL }} -t uvc-frontend:latest .
 
 
       # 9️⃣ Smoke test Docker container
