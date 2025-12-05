@@ -1,10 +1,10 @@
 // import { error } from '@sveltejs/kit';
 import { getData, getPromisesData } from '$lib/helpers/ajaxhelper';
-import.meta.env.VITE_PUBLIC_API_URL
+import { PUBLIC_API_URL } from '$env/static/public'; 
 
 // used api routes
-const timeSlotsApiRoute = `${VITE_PUBLIC_API_URL}/timeslots`;
-const allAppointmentsOnOneDay = `${VITE_PUBLIC_API_URL}/appointments?day=248`;
+const timeSlotsApiRoute = `${PUBLIC_API_URL}/timeslots`;
+const allAppointmentsOnOneDay = `${PUBLIC_API_URL}/appointments?day=248`;
 
 /**
      * Because the API does not support schedules we have to combine multiple request to create our own.
