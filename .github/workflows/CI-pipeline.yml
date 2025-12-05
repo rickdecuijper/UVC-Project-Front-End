@@ -41,6 +41,8 @@ jobs:
 
       # 6️⃣ Run tests with coverage
       - run: npm run test -- --coverage
+        env:
+          PUBLIC_API_URL: ${{ secrets.PUBLIC_API_URL }}
 
       - uses: actions/upload-artifact@v4
         with:
@@ -59,7 +61,8 @@ jobs:
       # 8️⃣ Build Docker container
       - name: run docker build
         run: docker build --build-arg PUBLIC_API_URL=${{ secrets.PUBLIC_API_URL }} -t uvc-frontend:latest .
-
+        env:
+            PUBLIC_API_URL: ${{ secrets.PUBLIC_API_URL }}
 
       # 9️⃣ Smoke test Docker container
       - run: |
