@@ -1,0 +1,79 @@
+name: CI – Build, Test & Containerize Svelte App
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+        run:
+          working-directory: ${{ github.workspace }}
+    steps:
+      # 1️⃣ Checkout repository
+      - uses: actions/checkout@v4
+
+      # 2️⃣ Set up Node.js
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      # 3️⃣ Install dependencies (including @sveltejs/adapter-node)
+      - run: npm ci
+
+      # 4️⃣ Run ESLint safely
+      - run: npx eslint . -f json -o eslint-report.json || true
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: eslint-report
+          path: eslint-report.json
+
+      # 5️⃣ Build SvelteKit project
+      - name: Build
+        run: npm run build
+        env:
+          VITE_PUBLIC_API_URL: ${{ secrets.PUBLIC_API_URL }}
+
+      # 6️⃣ Run tests with coverage
+      - run: npm run test -- --coverage
+        env:
+          PUBLIC_API_URL: ${{ secrets.PUBLIC_API_URL }}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage
+          retention-days: 7
+
+      # 7️⃣ Upload build artifact
+      - if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: svelte-build
+          path: build
+          retention-days: 7
+
+      # 8️⃣ Build Docker container
+      - name: run docker build
+        run: docker build --build-arg PUBLIC_API_URL=${{ secrets.PUBLIC_API_URL }} -t uvc-frontend:latest .
+        env:
+            PUBLIC_API_URL: ${{ secrets.PUBLIC_API_URL }}
+
+      # 9️⃣ Smoke test Docker container
+      - run: |
+          docker run -d -p 4173:4173 --name testapp uvc-frontend:latest
+          sleep 5
+          curl -f http://localhost:4173 || exit 1
+
+      # 🔟 Notify Discord on failure
+      - if: failure()
+        run: |
+          curl -H "Content-Type: application/json" \
+            -X POST \
+            -d "{\"content\": \"❌ CI FAILED for **$GITHUB_REPOSITORY**\n🔧 Job: build\n📌 Commit: $GITHUB_SHA\n👤 Author: $GITHUB_ACTOR\"}" \
+            ${{ secrets.DISCORD_WEBHOOK_URL }}
