@@ -3,8 +3,8 @@ import { getData, getPromisesData } from '$lib/helpers/ajaxhelper';
 import.meta.env.VITE_PUBLIC_API_URL
 
 // used api routes
-const timeSlotsApiRoute = `${PUBLIC_API_URL}/timeslots`;
-const allAppointmentsOnOneDay = `${PUBLIC_API_URL}/appointments?day=248`;
+const timeSlotsApiRoute = `${VITE_PUBLIC_API_URL}/timeslots`;
+const allAppointmentsOnOneDay = `${VITE_PUBLIC_API_URL}/appointments?day=248`;
 
 /**
      * Because the API does not support schedules we have to combine multiple request to create our own.
