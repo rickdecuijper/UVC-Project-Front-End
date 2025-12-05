@@ -37,7 +37,7 @@ jobs:
       - name: Build
         run: npm run build
         env:
-          PUBLIC_API_URL: ${{ secrets.PUBLIC_API_URL }}
+          VITE_PUBLIC_API_URL: ${{ secrets.PUBLIC_API_URL }}
 
       # 6️⃣ Run tests with coverage
       - run: npm run test -- --coverage
