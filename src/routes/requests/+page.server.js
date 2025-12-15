@@ -18,12 +18,11 @@ export const load = async () => {
 
         return { appointments };
     } catch (error) {
-        console.log('🐮', error);
         return { error };
     }
 };
 
 // Local helper (not exported)
-function inAppointment(timeslotId, appointments) {
-    return appointments.find(a => a.timeslotId === timeslotId);
-}
+// function inAppointment(timeslotId, appointments) {
+//     return appointments.find(a => a.timeslotId === timeslotId);
+// }

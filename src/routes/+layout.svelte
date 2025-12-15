@@ -5,7 +5,21 @@
     // Dit is de correcte manier om de 'children' prop op te halen in Svelte 5.
     let { children } = $props(); 
 
-    // De Svelte 'page' store laten we weg, omdat deze data ophaalt en crasht.
+    import { page } from '$app/stores';
+  import { derived } from 'svelte/store';
+
+  // Dynamische data
+  let kinderenAantal = 3;
+
+  // Active page (from SvelteKit page store)
+  const activePath = derived(page, ($page) => $page.url.pathname);
+
+  // Navigation items
+  const navItems = [
+    { name: 'Schattenjacht', href: '/schatkaart' },
+    { name: 'Kalender', href: '/kalender' },
+    { name: 'Avatars', href: '/avatars' }
+  ];
 </script>
 
 <svelte:head>
@@ -13,30 +27,82 @@
 </svelte:head>
 
 <section class="flex h-screen flex-col justify-between">
-    <header class="flex justify-between items-center bg-purple-100 p-4">
-        <h1 class="text-lg">Speeltuin Onderhoud</h1>
+<header class="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-4">
+  <div class="flex justify-between items-center">
 
-        <div class="flex space-x-6 items-center"> 
-            
-            <nav>
-                <ul class="flex space-x-4 text-sm font-medium">
-                    <li><a href="/schatkaart"> Schatkaart </a></li>
-                    <li><a href="/kalender"> Kalender </a></li>
-                    <li><a href="#"> Avatar </a></li>
-                </ul>
-            </nav>
-            
-            <div class="flex space-x-2">
-                <button class="p-2 bg-white rounded-lg shadow text-sm">Kinderen</button>
-                <button class="p-2 bg-red-100 text-red-700 rounded-lg shadow text-sm">Uitloggen</button>
-            </div>
-        </div>
-    </header>
+    <!-- Left: Title + subtitle -->
+    <div class="flex items-center space-x-4">
+      <div class="bg-white/20 p-3 rounded-xl">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none"
+             viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+        </svg>
+      </div>
+      <div>
+        <h1 class="text-xl font-bold">Speeltuin Onderhoud</h1>
+        <p class="text-sm text-white/90">Plan en beheer schoonmaak- en onderhoudstaken</p>
+      </div>
+    </div>
+
+    <!-- Right: Navigation + actions -->
+    <div class="flex items-center space-x-6">
+
+      <!-- Navigation -->
+      <nav>
+        <ul class="flex space-x-3 text-sm font-medium">
+          {#each navItems as item}
+            <li>
+              <a 
+                href={item.href}
+                class="px-4 py-2 rounded-full transition
+                      { $activePath === item.href ? 'bg-white text-purple-600 font-semibold shadow' : 'bg-white/20 hover:bg-white/30'}">
+                {item.name}
+              </a>
+            </li>
+          {/each}
+        </ul>
+      </nav>
+
+      <!-- Action buttons -->
+      <div class="flex space-x-2">
+        <button
+          class="flex items-center space-x-2 px-4 py-2 bg-white text-purple-600 rounded-lg shadow hover:bg-purple-50 transition text-sm font-medium">
+          👦 <span>Kinderen beheren ({kinderenAantal})</span>
+        </button>
+
+        <button
+          class="flex items-center space-x-2 px-4 py-2 bg-red-500 hover:bg-red-600 rounded-lg shadow text-sm font-medium">
+          ⎋ <span>Uitloggen</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+</header>
+
     <main>
         {@render children?.()}
     </main>
+        <footer class="bg-gradient-to-r from-purple-500 via-pink-400 to-green-400 
+                    text-white p-6 text-center text-sm shadow-inner">
+            
+            <p class="font-bold text-lg">
+                 Schoolplein Onderhoud
+            </p>
 
-    <footer class="">
-        <p class="p-2 text-center">Footer</p>
-    </footer>
+            <p class="mt-1 font-medium">
+                Ontwikkeld door <span class="underline">Sneaky Golem</span>
+            </p>
+
+            <p class="mt-2">
+                Boaz Vaneveld · Rick de Cuijper · Bart Geijtenbeek ·<br>
+                Valentijn van Grunsven · Xander UijtdeHaag
+            </p>
+
+            <p class="mt-3 text-white/90">
+            In opdracht van IVN
+            </p>
+        </footer>
+
 </section>

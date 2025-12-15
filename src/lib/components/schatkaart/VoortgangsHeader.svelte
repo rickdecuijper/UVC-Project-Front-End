@@ -1,6 +1,6 @@
 <script>
     export let missiesVoltooid = 0; 
-    export let totaalMissies = 6; 
+    export let totaalMissies = 5; 
     
     $: voortgangsPercentage = (missiesVoltooid / totaalMissies) * 100;
 </script>
