@@ -1,42 +1,35 @@
 <script>
-  import CalendarHeader from './CalendarHeader.svelte';
-  import CalendarCell from './CalendarCell.svelte';
-
-  const days = ['ma','di','wo','do','vr','za','zo'];
-  const blocks = [
-    { label: 'Ochtend', color: 'bg-yellow-400' },
-    { label: 'Middag', color: 'bg-red-500' }
+  export let tasks = [
+    { id: 1, title: 'Zandbak harken', date: '2025-12-15', time: 'Ochtend', type: 'E', child: 'L' },
+    { id: 2, title: 'Speeltoestellen schoonmaken', date: '2025-12-15', time: 'Ochtend', type: 'E' },
+    { id: 3, title: 'Prullenbakken legen', date: '2025-12-15', time: 'Middag', type: 'S' }
   ];
+
+  const days = ['ma', 'di', 'wo', 'do', 'vr', 'za', 'zo'];
+  const times = ['Ochtend', 'Middag'];
 </script>
 
-<section class="bg-white p-4 rounded-xl shadow-lg mb-12">
-  <CalendarHeader />
+<div class="grid grid-cols-8 gap-2 bg-white p-4 rounded-xl shadow">
+  <div class="col-span-1"></div>
+  {#each days as day, i}
+    <div class="text-center font-bold text-purple-700 p-2 rounded">{day}</div>
+  {/each}
 
-  <div class="grid grid-cols-8 gap-1 mb-1">
-    <div class="col-span-1 p-2 bg-gray-50"></div>
+  {#each times as time}
+    <div class="font-semibold text-white p-2 rounded 
+                {time === 'Ochtend' ? 'bg-yellow-400' : 'bg-orange-400'}">
+      {time}
+    </div>
+
     {#each days as day, i}
-      <div class="col-span-1 text-white rounded-t-lg text-center font-bold p-2
-        {i === 0 ? 'bg-red-400' : ''}
-        {i === 1 ? 'bg-orange-500' : ''}
-        {i === 2 ? 'bg-green-500' : ''}
-        {i === 3 ? 'bg-blue-600' : ''}
-        {i === 4 ? 'bg-blue-500' : ''}
-        {i === 5 ? 'bg-purple-500' : ''}
-        {i === 6 ? 'bg-pink-500' : ''}">
-        {day}
+      <div class="border-dashed border-2 border-orange-300 min-h-[80px] p-2 rounded">
+        {#each tasks.filter(t => t.date.endsWith(`-${15+i}`) && t.time === time) as t}
+          <div class="bg-blue-200 rounded p-1 mb-1 text-xs">
+            {t.title} <span class="font-bold">{t.type}</span>
+          </div>
+        {/each}
+        <button class="text-orange-500 text-sm mt-1">+ Taak</button>
       </div>
     {/each}
-  </div>
-
-  {#each blocks as block}
-    <div class="grid grid-cols-8 gap-1 mb-1">
-      <div class="col-span-1 p-2 text-white rounded-l-lg flex items-center justify-center {block.color}">
-        <span class="text-xs font-bold">{block.label}</span>
-      </div>
-
-      {#each Array(7) as _}
-        <CalendarCell />
-      {/each}
-    </div>
   {/each}
-</section>
+</div>
