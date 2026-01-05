@@ -27,7 +27,7 @@
 </svelte:head>
 
 <section class="flex h-screen flex-col justify-between">
-<header class="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-4">
+<header class="bg-gradient-to-r from-purple-500 via-pink-500 to-amber-500 text-white px-6 py-4">
   <div class="flex justify-between items-center">
 
     <!-- Left: Title + subtitle -->
@@ -84,7 +84,7 @@
     <main>
         {@render children?.()}
     </main>
-        <footer class="bg-gradient-to-r from-purple-500 via-pink-400 to-green-400 
+        <footer class="bg-gradient-to-r from-purple-500 via-pink-400 to-red-400 
                     text-white p-6 text-center text-sm shadow-inner">
             
             <p class="font-bold text-lg">
