@@ -1,45 +1,154 @@
 <script>
-    let gekozenGeslacht = "Man";
-    let gekozenRas = "White";
-    let gekozenGewicht = 100
-    let gekozenHaarKleur = "Black"
+    import { onMount } from 'svelte';
+    import Avatar from '$lib/components/avatar/Avatar.svelte';
+
+    let onderdelen = [];
+    
+    let selectie = {
+        huidskleur: "#FFDBAC",
+        haarvorm: "kort",
+        haarkleur: "#442200",
+        kleding: "shirt_basis.png",
+        accessoire: ""
+    };
+
+    onMount(async () => {
+        const res = await fetch('http://localhost:3011/avatar/onderdelen');
+        onderdelen = await res.json();
+    });
+
+    function kies(item) {
+        if (item.categorie === 'huid') {
+            selectie.huidskleur = item.hex_kleur;
+        } else if (item.categorie === 'haarstijl') {
+            selectie.haarvorm = item.afbeelding;
+        } else if (item.categorie === 'haarkleur') {
+            selectie.haarkleur = item.hex_kleur;
+        } else if (item.categorie === 'kleding') {
+            selectie.kleding = item.afbeelding;
+        } else if (item.categorie === 'accessoire') {
+            selectie.accessoire = item.afbeelding;
+        }
+    }
+
+    $: categorieen = ["huid", "haarstijl", "haarkleur", "kleding", "accessoire"];
 </script>
 
-<div class="bg-sky-200 border-2 border-blue-300" style="position: absolute; width: 700px; height: 555px; top: 140px; left: 40px; display: flex; justify-content: center; align-items: center; border-radius: 20px;">
-    <svg width={400 * 2} height={400 * 2}>
-        <circle cx={350} cy={450} r={gekozenGewicht} fill="Blue" />
-        <circle cx={350} cy={300} r={100} fill={gekozenRas} />
-        {#if gekozenRas == "White"}
-            <circle cx={400} cy={300} r={5} fill="Blue" />
-            <circle cx={300} cy={300} r={5} fill="Blue" />
-        {/if}
-        {#if gekozenRas == "Black"}
-            <circle cx={400} cy={300} r={5} fill="blue" />
-            <circle cx={300} cy={300} r={5} fill="blue" />
-        {/if}
-        {#if gekozenRas == "Yellow"}
-            <circle cx={400} cy={300} r={5} fill="blue" />
-            <circle cx={300} cy={300} r={5} fill="blue" />
-        {/if}
-        <rect x="260" y="190" width={180} height={70} fill={gekozenHaarKleur} rx="10" />
-    </svg>
+<div class="creator-root">
+    <div class="avatar-preview">
+        <Avatar 
+            huid={selectie.huidskleur}
+            haarVorm={selectie.haarvorm}
+            haarKleur={selectie.haarkleur}
+            kleding={selectie.kleding}
+            extra={selectie.accessoire}
+        />
+    </div>
+
+    <div class="shop-panel">
+        {#each categorieen as cat}
+            <div class="category-section">
+                <h3>Kies {cat}</h3>
+                <div class="button-grid">
+                    {#each onderdelen.filter(i => i.categorie === cat) as item}
+                        <button 
+                            class="item-btn" 
+                            class:active={
+                                (cat === 'huid' && selectie.huidskleur === item.hex_kleur) ||
+                                (cat === 'haarkleur' && selectie.haarkleur === item.hex_kleur) ||
+                                (cat === 'haarstijl' && selectie.haarvorm === item.afbeelding) ||
+                                (cat === 'kleding' && selectie.kleding === item.afbeelding) ||
+                                (cat === 'accessoire' && selectie.accessoire === item.afbeelding)
+                            }
+                            on:click={() => kies(item)}
+                        >
+                            {#if item.hex_kleur && item.hex_kleur !== ""}
+                                <span class="color-dot" style="background: {item.hex_kleur}"></span>
+                            {/if}
+                            <span class="btn-text">{item.naam}</span>
+                        </button>
+                    {/each}
+                </div>
+            </div>
+        {/each}
+    </div>
 </div>
 
-<div class="bg-sky-200 border-2 border-blue-300" style="position: absolute; width: 700px; height: 555px; top: 140px; left: 965px; border-radius: 20px;">
-    <h1 style="position: absolute; left: 20px; font-size: 40px;">Pas je avatar aan</h1>
+<style>
+    .creator-root { 
+        display: flex; 
+        gap: 40px; 
+        padding: 40px; 
+        max-width: 1200px; 
+        margin: 0 auto; 
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
 
-    <h1 style="font-size: 30px; position: absolute; left: 20px; top: 60px;">Huidskleur:</h1>
-    <button style="width: 170px; height: 70px; font-size: 35px; position: absolute; left: 40px; top: 130px; background-color: wheat; border-radius: 10px;" on:click={() => {gekozenRas = "White"}}></button>
-    <button style="width: 170px; height: 70px; font-size: 35px; position: absolute; left: 250px; top: 130px; background-color: black; border-radius: 10px;" on:click={() => {gekozenRas = "Black"}}></button>
-    <button style="width: 170px; height: 70px; font-size: 35px; position: absolute; left: 460px; top: 130px; background-color: yellow; border-radius: 10px;" on:click={() => {gekozenRas = "Yellow"}}></button>
+    .avatar-preview { 
+        flex: 1; 
+        position: sticky; 
+        top: 20px; 
+        height: 500px;
+        background: #f1f5f9;
+        border-radius: 24px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+    }
 
-    <h1 style="font-size: 30px; position: absolute; left: 20px; top: 210px;">Dikheid:</h1>
-    <button style="width: 170px; height: 70px; font-size: 35px; position: absolute; left: 40px; top: 280px; border-radius: 10px; background-color: white;" on:click={() => {gekozenGewicht = 100}}>Dun</button>
-    <button style="width: 170px; height: 70px; font-size: 35px; position: absolute; left: 250px; top: 280px; border-radius: 10px; background-color: white;" on:click={() => {gekozenGewicht = 140}}>Normaal</button>
-    <button style="width: 170px; height: 70px; font-size: 35px; position: absolute; left: 460px; top: 280px; border-radius: 10px; background-color: white;" on:click={() => {gekozenGewicht = 200}}>Dik</button>
+    .shop-panel { flex: 1.5; }
 
-    <h1 style="font-size: 30px; position: absolute; left: 20px; top: 360px;">Haarkleur:</h1>
-    <button style="width: 170px; height: 70px; font-size: 35px; position: absolute; left: 40px; top: 430px; border-radius: 10px; background-color: white;" on:click={() => {gekozenHaarKleur = "Black"}}>Zwart</button>
-    <button style="width: 170px; height: 70px; font-size: 35px; position: absolute; left: 250px; top: 430px; border-radius: 10px; background-color: white;" on:click={() => {gekozenHaarKleur = "Brown"}}>Bruin</button>
-    <button style="width: 170px; height: 70px; font-size: 35px; position: absolute; left: 460px; top: 430px; border-radius: 10px; background-color: white;" on:click={() => {gekozenHaarKleur = "Red"}}>Ginger</button>
-</div>
+    .category-section { margin-bottom: 32px; }
+
+    h3 { 
+        text-transform: capitalize; 
+        font-size: 1.2rem; 
+        color: #334155;
+        margin-bottom: 16px;
+        border-bottom: 2px solid #e2e8f0;
+        padding-bottom: 8px;
+    }
+
+    .button-grid { 
+        display: grid; 
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); 
+        gap: 12px; 
+    }
+
+    .item-btn { 
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 16px; 
+        border: 2px solid #e2e8f0; 
+        cursor: pointer; 
+        border-radius: 12px; 
+        background: white; 
+        transition: all 0.2s;
+        text-align: left;
+    }
+
+    .item-btn:hover { 
+        background: #f8fafc; 
+        border-color: #cbd5e1; 
+    }
+
+    .item-btn.active { 
+        border-color: #3b82f6; 
+        background: #eff6ff; 
+    }
+
+    .color-dot {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        border: 1px solid rgba(0,0,0,0.1);
+        flex-shrink: 0;
+    }
+
+    .btn-text {
+        font-size: 0.95rem;
+        color: #1e293b;
+    }
+</style>
