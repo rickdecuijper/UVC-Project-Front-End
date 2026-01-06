@@ -1,4 +1,5 @@
 <script>
+  export let data;
   import { writable } from 'svelte/store';
   import { onMount, onDestroy } from 'svelte';
   import CalenderHeader from '$lib/components/calendar/CalenderHeader.svelte';
@@ -7,7 +8,7 @@
   /* =========================
      Stores & State
   ========================= */
-  const tasks = writable([]);
+  const tasks = writable(data.tasks);
   const peopleOptions = ['Emma','Liam','Sophie'];
 
   const emptyTask = {
@@ -28,10 +29,15 @@
   }
   timeSlots.push('18:00');
 
-  const colors = {
-    ma:'bg-gradient-to-r from-pink-500 to-orange-500', di:'bg-gradient-to-r from-orange-500 to-lime-400', wo:'bg-gradient-to-r from-lime-400 to-green-500',
-    do:'bg-gradient-to-r from-green-500 to-blue-400', vr:'bg-gradient-to-r from-blue-400 to-indigo-500', za:'bg-gradient-to-r from-indigo-500 to-purple-500', zo:'bg-gradient-to-r from-purple-500 to-pink-500'
-  };
+ const colors = {
+  ma: 'bg-gradient-to-br from-pink-500 to-orange-500',
+  di: 'bg-gradient-to-br from-orange-500 to-lime-400',
+  wo: 'bg-gradient-to-br from-lime-400 to-green-500',
+  do: 'bg-gradient-to-br from-green-500 to-blue-400',
+  vr: 'bg-gradient-to-br from-blue-400 to-indigo-500',
+  za: 'bg-gradient-to-br from-indigo-500 to-purple-500',
+  zo: 'bg-gradient-to-br from-purple-500 to-pink-500',
+};
 
   let currentDate = new Date();
   let weekDays = [];
