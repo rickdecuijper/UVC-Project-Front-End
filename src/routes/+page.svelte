@@ -27,10 +27,14 @@
     try {
       //TODO fix endpoints
       const endpoint = mode === 'login'
-        ? '/api/auth/login'
-        : '/api/auth/register';
+        // ? `${import.meta.env.VITE_API_URL}/auth/login`
+        // : `${import.meta.env.VITE_API_URL}/auth/register`;
+        ? `http://localhost:3011/auth/login`
+        : `http://localhost:3011/auth/register`;
 
       const body: Record<string, string> = { password, email };
+
+      console.log(endpoint);
 
       if (mode === 'register') {
         body.username = username;
