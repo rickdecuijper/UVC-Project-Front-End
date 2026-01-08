@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { goto } from '$app/navigation';
+
   let mode: 'login' | 'register' = 'login';
 
   let email = '';
@@ -25,16 +27,15 @@
     loading = true;
 
     try {
-      //TODO fix endpoints
-      const endpoint = mode === 'login'
-        // ? `${import.meta.env.VITE_API_URL}/auth/login`
-        // : `${import.meta.env.VITE_API_URL}/auth/register`;
-        ? `http://localhost:3011/auth/login`
-        : `http://localhost:3011/auth/register`;
+      const endpoint =
+        mode === 'login'
+          ? 'http://localhost:3011/auth/login'
+          : 'http://localhost:3011/auth/register';
 
-      const body: Record<string, string> = { password, email };
-
-      console.log(endpoint);
+      const body: Record<string, string> = {
+        email,
+        password
+      };
 
       if (mode === 'register') {
         body.username = username;
@@ -46,12 +47,22 @@
         body: JSON.stringify(body)
       });
 
+      const data = await res.json();
+
       if (!res.ok) {
-        const data = await res.json();
         throw new Error(data.message ?? 'Authentication failed');
       }
 
-      alert(mode === 'login' ? 'Logged in!' : 'Registered!');
+      /**
+       * Store auth token in cookie
+       * Cookie name = auth_token
+       */
+      if (mode === 'login') {
+        document.cookie = `auth_token=${data.auth_token}; path=/; max-age=86400`;
+        goto('/kalender');
+      } else {
+        goto('/login');
+      }
     } catch (e) {
       error = e instanceof Error ? e.message : 'Something went wrong';
     } finally {
@@ -92,7 +103,7 @@
           type="email"
           bind:value={email}
           required
-          class="w-full rounded-lg bg-gray-800 border border-gray-700 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          class="w-full rounded-lg bg-gray-800 border border-gray-700 px-3 py-2"
         />
       </div>
 
@@ -103,7 +114,7 @@
             type="text"
             bind:value={username}
             required
-            class="w-full rounded-lg bg-gray-800 border border-gray-700 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            class="w-full rounded-lg bg-gray-800 border border-gray-700 px-3 py-2"
           />
         </div>
       {/if}
@@ -114,7 +125,7 @@
           type="password"
           bind:value={password}
           required
-          class="w-full rounded-lg bg-gray-800 border border-gray-700 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          class="w-full rounded-lg bg-gray-800 border border-gray-700 px-3 py-2"
         />
       </div>
 
@@ -125,7 +136,7 @@
             type="password"
             bind:value={confirmPassword}
             required
-            class="w-full rounded-lg bg-gray-800 border border-gray-700 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            class="w-full rounded-lg bg-gray-800 border border-gray-700 px-3 py-2"
           />
         </div>
       {/if}
@@ -137,23 +148,10 @@
       <button
         type="submit"
         disabled={loading}
-        class="w-full rounded-xl bg-indigo-600 py-2 font-semibold hover:bg-indigo-500 disabled:opacity-60 disabled:cursor-not-allowed transition"
+        class="w-full rounded-xl bg-indigo-600 py-2 font-semibold disabled:opacity-60"
       >
-        {loading
-          ? 'Please wait...'
-          : mode === 'login'
-          ? 'Login'
-          : 'Create account'}
+        {loading ? 'Please wait...' : mode === 'login' ? 'Login' : 'Create account'}
       </button>
     </form>
-
-    <button
-      class="mt-6 w-full text-sm text-indigo-300 hover:underline"
-      on:click={switchMode}
-    >
-      {mode === 'login'
-        ? 'No account yet? Register'
-        : 'Already have an account? Login'}
-    </button>
   </div>
 </div>
