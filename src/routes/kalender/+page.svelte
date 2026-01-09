@@ -1,28 +1,60 @@
 <script>
-  import { onMount } from 'svelte';
   import { writable } from 'svelte/store';
+  import CalenderHeader from '$lib/components/calendar/CalenderHeader.svelte';
+  import TaskPool from '$lib/components/calendar/TaskPool.svelte';
+  import { onMount } from 'svelte';
 
-  // Calendar state
-  let currentDate = new Date();
-  let showModal = false;
-  let modalData = { date: null, time: null, taskIndex: null, editing: false };
-  let newTask = { title: '', description: '', subtasks: [''], status: 'Nog niet gestart', people: [] };
+  export let data;
 
-  const peopleOptions = ['Emma', 'Liam', 'Sophie'];
+  /* =========================
+     Stores & State
+  ========================= */
+  const tasks = writable(data.tasks || []);
+  const peopleOptions = ['Emma','Liam','Sophie'];
 
-  function getStartOfWeek(date) {
+  const emptyTask = {
+    id: null,
+    title: '',
+    description: '',
+    subtasks: [''],
+    status: 'Nog niet gestart',
+    people: [],
+    date: null,
+    time: null
+  };
+
+  const timeSlots = [];
+  for(let h=8; h<18; h++){
+    timeSlots.push(`${h.toString().padStart(2,'0')}:00`);
+    timeSlots.push(`${h.toString().padStart(2,'0')}:30`);
+  }
+  timeSlots.push('18:00');
+
+  const colors = {
+    ma: 'bg-gradient-to-br from-pink-500 to-orange-500',
+    di: 'bg-gradient-to-br from-orange-500 to-lime-400',
+    wo: 'bg-gradient-to-br from-lime-400 to-green-500',
+    do: 'bg-gradient-to-br from-green-500 to-blue-400',
+    vr: 'bg-gradient-to-br from-blue-400 to-indigo-500',
+    za: 'bg-gradient-to-br from-indigo-500 to-purple-500',
+    zo: 'bg-gradient-to-br from-purple-500 to-pink-500',
+  };
+let currentDate = new Date();
+  let weekDays = [];
+  let monthName;
+
+  function getStartOfWeek(date){
     const day = date.getDay();
-    const diff = (day === 0 ? -6 : 1) - day;
+    const diff = (day === 0 ? -6 : 1) - day; // Monday as first day
     const monday = new Date(date);
     monday.setDate(date.getDate() + diff);
     return monday;
   }
 
-  let weekDays = [];
-  function updateWeekDays() {
+  function updateWeekDays(){
     const start = getStartOfWeek(currentDate);
     weekDays = [];
-    for (let i = 0; i < 7; i++) {
+    for (let i = 0; i < 7; i++){
       const d = new Date(start);
       d.setDate(start.getDate() + i);
       weekDays.push({
@@ -33,255 +65,251 @@
     }
   }
 
-  function prevWeek() { currentDate.setDate(currentDate.getDate()-7); updateWeekDays(); }
-  function nextWeek() { currentDate.setDate(currentDate.getDate()+7); updateWeekDays(); }
+  function prevWeek(){
+    currentDate = new Date(currentDate.setDate(currentDate.getDate() - 7)); // <-- reassign
+    updateWeekDays();
+  }
 
-  onMount(() => updateWeekDays());
+  function nextWeek(){
+    currentDate = new Date(currentDate.setDate(currentDate.getDate() + 7)); // <-- reassign
+    updateWeekDays();
+  }
 
-  let tasks = writable({});
+  $: {
+    const start = getStartOfWeek(currentDate);
+    const end = new Date(start);
+    end.setDate(start.getDate() + 6);
+    
+    const startMonth = start.toLocaleDateString('nl-NL', { month: 'long', year: 'numeric' });
+    const endMonth = end.toLocaleDateString('nl-NL', { month: 'long', year: 'numeric' });
+    
+    monthName = startMonth === endMonth ? startMonth : `${startMonth} – ${endMonth}`;
+  }
 
-  function openTaskModal(date, time, editingTask = null, taskIndex = null) {
-    modalData = { date, time, taskIndex, editing: !!editingTask };
-    if(editingTask){
-      newTask = JSON.parse(JSON.stringify(editingTask));
-      if(!newTask.subtasks || newTask.subtasks.length === 0) newTask.subtasks = [''];
+  onMount(updateWeekDays)
+  /* =========================
+     Task Modal
+  ========================= */
+  let showModal = false;
+  let modalData = { taskId: null, editing: false };
+  let newTask = structuredClone(emptyTask);
+
+  function openTaskModal(task = null, taskId = null, date = null, time = null){
+    if(task){
+      modalData = { taskId, editing: true };
+      newTask = structuredClone(task);
     } else {
-      newTask = { title: '', description: '', subtasks: [''], status: 'Nog niet gestart', people: [] };
+      modalData = { taskId: null, editing: false };
+      newTask = structuredClone(emptyTask);
+      newTask.date = date;
+      newTask.time = time;
     }
     showModal = true;
   }
 
-  function addTaskSubtask() { newTask.subtasks = [...newTask.subtasks, '']; }
-  function removeTaskSubtask(i) { newTask.subtasks = newTask.subtasks.filter((_,idx)=>idx!==i); }
+  function addTaskSubtask(){
+    if(newTask.subtasks.length < 3) newTask.subtasks = [...newTask.subtasks,''];
+  }
 
-  function saveTask() {
-    tasks.update(t => {
-      const key = modalData.date.toDateString();
-      if(!t[key]) t[key] = { morning: [], afternoon: [] };
+  function removeTaskSubtask(i){
+    newTask.subtasks = newTask.subtasks.filter((_, idx)=> idx !== i);
+  }
+
+  function saveTask(){
+    tasks.update(allTasks => {
+      const taskCopy = structuredClone(newTask);
+      if(!taskCopy.id) taskCopy.id = crypto.randomUUID();
+
       if(modalData.editing){
-        t[key][modalData.time][modalData.taskIndex] = JSON.parse(JSON.stringify(newTask));
+        const index = allTasks.findIndex(t => t.id === modalData.taskId);
+        if(index !== -1) allTasks[index] = taskCopy;
       } else {
-        t[key][modalData.time].push(JSON.parse(JSON.stringify(newTask)));
+        allTasks.push(taskCopy);
       }
-      return t;
+
+      return allTasks;
     });
     showModal = false;
   }
 
-  // Drag & drop for calendar tasks
-  let dragTask = null;
-  let dragOrigin = null;
-  function handleDragStart(e,task,date,time,index){ dragTask=task; dragOrigin={date,time,index}; e.dataTransfer.effectAllowed='move'; }
-  function handleDrop(e,date,time){
-    tasks.update(t=>{
-      if(dragOrigin){
-        const keyO = dragOrigin.date.toDateString();
-        t[keyO][dragOrigin.time].splice(dragOrigin.index,1);
-      }
-      const key = date.toDateString();
-      if(!t[key]) t[key] = { morning: [], afternoon: [] };
-      t[key][time].push({...dragTask});
-      return t;
+  function deleteTask(){
+    tasks.update(allTasks => {
+      const index = allTasks.findIndex(t => t.id === modalData.taskId);
+      if(index !== -1) allTasks.splice(index,1);
+      return allTasks;
     });
-    dragTask=null;
-    dragOrigin=null;
+    showModal = false;
   }
+
+  /* =========================
+     Drag & Drop
+  ========================= */
+  function handleDragStart(task, source){
+    window.__dragTask = structuredClone(task);
+    window.__dragSource = source;
+  }
+
+  function handleDrop(date, time){
+    const task = window.__dragTask;
+    const source = window.__dragSource;
+    if(!task) return;
+
+    tasks.update(allTasks => {
+      // Copy the task for calendar
+      const taskCopy = {
+        ...task,
+        subtasks: [...task.subtasks],
+        people: [...task.people],
+        date,
+        time,
+        id: source === 'pool' ? crypto.randomUUID() : task.id
+      };
+
+      // Remove original if moving inside calendar or from calendar
+      if(source === 'calendar'){
+        const index = allTasks.findIndex(t => t.id === task.id);
+        if(index !== -1) allTasks.splice(index,1);
+      }
+
+      allTasks.push(taskCopy);
+      return allTasks;
+    });
+
+    window.__dragTask = null;
+    window.__dragSource = null;
+  }
+
+  function unscheduleTask(task){
+    tasks.update(allTasks => {
+      const index = allTasks.findIndex(t => t.id === task.id);
+      if(index !== -1) allTasks[index] = { ...allTasks[index], date: null, time: null };
+      return allTasks;
+    });
+  }
+
   function allowDrop(e){ e.preventDefault(); }
-
-  $: monthName = currentDate.toLocaleString('nl-NL',{ month:'long', year:'numeric' });
-
-  // Task pool
-  let taskPool = writable([]);
-  let showPoolForm = false;
-  let newPoolTask = { title: '', description: '', subtasks: [''], status: 'Nog niet gestart', people: [] };
-
-  function addPoolSubtask() { newPoolTask.subtasks = [...newPoolTask.subtasks, '']; }
-  function removePoolSubtask(i) { newPoolTask.subtasks = newPoolTask.subtasks.filter((_,idx)=>idx!==i); }
-
-  function savePoolTask() {
-    taskPool.update(t => [...t, {...newPoolTask}]);
-    newPoolTask = { title:'', description:'', subtasks:[''], status:'Nog niet gestart', people:[] };
-    showPoolForm = false;
+  function formatDate(d){ 
+    if(!d) return ''; 
+    const dateObj = d instanceof Date ? d : new Date(d);
+    return `${dateObj.getFullYear()}-${String(dateObj.getMonth()+1).padStart(2,'0')}-${String(dateObj.getDate()).padStart(2,'0')}`;
   }
 
-  // Drag from pool into calendar
-  function handlePoolDragStart(task){ dragTask = task; }
 </script>
 
-<div class="max-w-7xl mx-auto p-4 bg-gray-50 rounded-2xl shadow-md">
-  <!-- Calendar navigation -->
-  <div class="flex justify-between items-center mb-6">
-    <button class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600" on:click={prevWeek}>← Vorige week</button>
-    <div class="text-xl font-bold text-gray-800">{monthName}</div>
-    <button class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600" on:click={nextWeek}>Volgende week →</button>
-  </div>
+<style>
+  .calendar-header { text-align:center; font-weight:bold; border-radius:12px; color:white; padding:8px; box-shadow:0 1px 3px rgba(0,0,0,0.2);}
+  .calendar-cell { min-height:60px; border:1px solid #ddd; border-radius:12px; padding:4px; display:flex; flex-direction:column; }
+  .time-slot { background:#f0f0f0; text-align:right; padding-right:4px; font-size:12px; font-weight:600; border-radius:6px; }
+  .task-card { background:#dbeafe; padding:4px; border-radius:12px; margin-bottom:2px; cursor:pointer; box-shadow:0 1px 2px rgba(0,0,0,0.1); transition:all 0.2s; }
+  .task-card:hover{ background:#bfdbfe; }
+  .add-task-button{ border:1px dashed #c4b5fd; color:#7c3aed; font-size:12px; border-radius:12px; padding:2px 4px; cursor:pointer; margin-top:auto; text-align:center;}
+</style>
 
-  <!-- Calendar grid -->
-  <div class="grid grid-cols-[120px_repeat(7,1fr)] gap-4">
-    <div class="flex flex-col gap-6 text-right text-gray-700 font-semibold mt-10">
-      <div class="bg-yellow-400 text-white rounded-xl p-3 shadow-md">Ochtend<br>09:00-12:00</div>
-      <div class="bg-teal-400 text-white rounded-xl p-3 shadow-md">Middag<br>12:00+</div>
+<!-- =========================
+     Calendar Header
+========================= -->
+<CalenderHeader
+  {monthName}
+  on:prevWeek={prevWeek}
+  on:nextWeek={nextWeek}
+/>
+
+<!-- =========================
+     Calendar Grid
+========================= -->
+<div class="grid grid-cols-[80px_repeat(7,1fr)] gap-2">
+  <div></div>
+  {#each weekDays as day}
+    <div class={`calendar-header ${colors[day.name] ?? 'bg-gray-400'}`}>
+      <div class="text-xs">{day.name}</div>
+      <div class="text-lg">{day.dayNumber}</div>
     </div>
+  {/each}
+
+  {#each timeSlots as time}
+    <div class="time-slot">{time}</div>
 
     {#each weekDays as day}
-      <div class="flex flex-col bg-white rounded-2xl shadow">
-        <div class={`text-center p-3 font-bold text-white rounded-t-2xl
-          ${day.name==='ma'?'bg-pink-500':
-            day.name==='di'?'bg-orange-500':
-            day.name==='wo'?'bg-lime-500':
-            day.name==='do'?'bg-green-500':
-            day.name==='vr'?'bg-blue-500':
-            day.name==='za'?'bg-indigo-500':'bg-purple-500'}`}>
-          {day.name} {day.dayNumber}
-        </div>
+      <div class="calendar-cell"
+           on:dragover={allowDrop}
+           on:drop={() => handleDrop(day.date, time)}>
 
-        {#each ['morning','afternoon'] as time}
-          <div class="p-2 flex flex-col gap-2 bg-gray-50 rounded-b-xl"
-               on:drop={(e)=>handleDrop(e,day.date,time)} on:dragover={allowDrop}>
-            {#if $tasks[day.date.toDateString()]?.[time]}
-              {#each $tasks[day.date.toDateString()][time] as task,index}
-                <div class="bg-white p-3 rounded-xl shadow cursor-pointer hover:bg-gray-100"
-                     draggable="true"
-                     on:dragstart={(e)=>handleDragStart(e,task,day.date,time,index)}
-                     on:click={()=>openTaskModal(day.date,time,task,index)}>
-                  <div class="font-semibold">{task.title}</div>
-                  <div class="text-xs font-medium text-gray-600">{task.status}</div>
-                  <div class="text-sm text-gray-500 flex gap-1 flex-wrap mt-1">
-                    {#each task.people ?? [] as p}
-                      <span class="bg-blue-200 text-blue-800 px-2 rounded-full text-xs">{p}</span>
-                    {/each}
-                  </div>
-                  {#if task.subtasks?.length}
-                    <ul class="mt-1 text-xs list-disc list-inside text-gray-500">
-                      {#each task.subtasks as st}<li>{st}</li>{/each}
-                    </ul>
-                  {/if}
-                </div>
-              {/each}
-            {/if}
-            <button class="text-blue-500 border border-blue-500 rounded-lg px-2 py-1 hover:bg-blue-100"
-                    on:click={()=>openTaskModal(day.date,time)}>+ Taak</button>
+        {#each $tasks.filter(t => formatDate(t.date) === formatDate(day.date) && t.time === time) as task}
+          <div class="task-card"
+               draggable="true"
+               on:dragstart={() => handleDragStart(task, 'calendar')}
+               on:dblclick={() => openTaskModal(task, task.id)}>
+            <div class="font-semibold truncate">{task.title}</div>
+            <div class="text-gray-600 text-xs">{task.status}</div>
           </div>
         {/each}
+
+        <div class="add-task-button" on:click={() => openTaskModal(null, null, day.date, time)}>+ Taak</div>
       </div>
     {/each}
-  </div>
+  {/each}
 </div>
 
-<!-- Task Modal -->
+<!-- =========================
+     Task Modal
+========================= -->
 {#if showModal}
-<div class="absolute z-50 top-24 left-1/2 -translate-x-1/2 w-96 bg-white rounded-2xl p-6 shadow-xl border border-gray-200">
-  <h2 class="text-xl font-bold mb-2">{modalData.editing ? 'Bewerk taak' : 'Nieuwe taak toevoegen'}</h2>
-  <input class="w-full mb-2 p-2 border rounded-lg" placeholder="Voer taaknaam in" bind:value={newTask.title} />
-  <textarea class="w-full mb-2 p-2 border rounded-lg" placeholder="Beschrijving" bind:value={newTask.description}></textarea>
+  <div class="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+    <div class="bg-white rounded-2xl w-96 p-6 flex flex-col gap-4">
+      <h2 class="text-2xl font-bold border-b pb-2">{modalData.editing ? 'Bewerk Taak' : 'Nieuwe Taak'}</h2>
 
-  <label class="block mb-2 font-semibold">Status:</label>
-  <select class="w-full mb-2 p-2 border rounded-lg" bind:value={newTask.status}>
-    <option>Nog niet gestart</option>
-    <option>In progress</option>
-    <option>Voltooid</option>
-  </select>
+      <input bind:value={newTask.title} placeholder="Taaknaam" class="w-full p-2 border rounded-lg"/>
+      <textarea bind:value={newTask.description} placeholder="Beschrijving" class="w-full p-2 border rounded-lg" rows="3"></textarea>
 
-  <label class="block mb-2 font-semibold">Personen:</label>
-  <div class="flex gap-2 mb-2 flex-wrap">
-    {#each peopleOptions as p}
-      <label class="flex items-center gap-1">
-        <input type="checkbox"
-               checked={newTask.people.includes(p)}
-               on:change={e=>{
-                 if(e.target.checked) newTask.people=[...newTask.people,p];
-                 else newTask.people = newTask.people.filter(x=>x!==p);
-               }} />
-        {p}
-      </label>
-    {/each}
-  </div>
-
-  <label class="block mb-2 font-semibold">Subtaken:</label>
-  <div class="flex flex-col gap-2 mb-2">
-    {#each newTask.subtasks as st,i}
-      <div class="flex gap-2">
-        <input class="flex-1 p-2 border rounded-lg" placeholder="Subtaak..." bind:value={newTask.subtasks[i]} />
-        <button class="bg-red-500 text-white px-2 rounded-lg" on:click={()=>removeTaskSubtask(i)}>x</button>
-      </div>
-    {/each}
-    <button class="bg-blue-500 text-white px-3 py-1 rounded-lg hover:bg-blue-600" on:click={addTaskSubtask}>+ Subtaak</button>
-  </div>
-
-  <div class="flex justify-end gap-2 mt-4">
-    <button class="bg-gray-400 text-white px-4 py-2 rounded-lg hover:bg-gray-500" on:click={()=>showModal=false}>Annuleren</button>
-    <button class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600" on:click={saveTask}>Opslaan</button>
-  </div>
-</div>
-{/if}
-
-<!-- Task Pool -->
-<div class="max-w-7xl mx-auto mt-6 border-2 border-gray-300 rounded-2xl bg-gray-50 p-4 shadow-md">
-  <div class="flex justify-between items-center mb-4">
-    <h2 class="text-xl font-bold">Taken buiten de kalender</h2>
-    <button class="bg-blue-500 text-white px-3 py-1 rounded-lg hover:bg-blue-600" on:click={()=>showPoolForm=!showPoolForm}>
-      {showPoolForm ? 'Verberg form' : '+ Nieuwe taak'}
-    </button>
-  </div>
-
-  {#if showPoolForm}
-    <div class="flex flex-col gap-2 mb-4">
-      <input type="text" class="w-full p-2 border rounded-lg" placeholder="Taaknaam" bind:value={newPoolTask.title} />
-      <textarea class="w-full p-2 border rounded-lg" placeholder="Beschrijving" bind:value={newPoolTask.description}></textarea>
-
-      <label class="font-semibold">Status:</label>
-      <select class="w-full p-2 border rounded-lg" bind:value={newPoolTask.status}>
+      <label>Status:</label>
+      <select bind:value={newTask.status} class="w-full p-2 border rounded-lg">
         <option>Nog niet gestart</option>
         <option>In progress</option>
         <option>Voltooid</option>
       </select>
 
-      <label class="font-semibold">Personen:</label>
-      <div class="flex gap-2 flex-wrap">
+      <label>Personen:</label>
+      <div class="flex flex-wrap gap-2">
         {#each peopleOptions as p}
-          <label class="flex items-center gap-1">
-            <input type="checkbox" checked={newPoolTask.people.includes(p)} on:change={e=>{
-              if(e.target.checked) newPoolTask.people = [...newPoolTask.people,p];
-              else newPoolTask.people = newPoolTask.people.filter(x=>x!==p);
-            }} />
+          <label class="flex items-center gap-1 cursor-pointer select-none">
+            <input type="checkbox"
+              checked={Array.isArray(newTask.people) && newTask.people.includes(p)}
+              on:change={e => {
+                if(!Array.isArray(newTask.people)) newTask.people=[];
+                if(e.target.checked) newTask.people=[...newTask.people,p];
+                else newTask.people=newTask.people.filter(x=>x!==p);
+              }}
+            />
             {p}
           </label>
         {/each}
       </div>
 
-      <label class="font-semibold">Subtaken:</label>
-      <div class="flex flex-col gap-2 mb-2">
-        {#each newPoolTask.subtasks as st,i}
-          <div class="flex gap-2">
-            <input class="flex-1 p-2 border rounded-lg" bind:value={newPoolTask.subtasks[i]} placeholder="Subtaak..." />
-            <button class="bg-red-500 text-white px-2 rounded-lg" on:click={()=>removePoolSubtask(i)}>x</button>
+      <!-- Subtasks -->
+      <div class="flex flex-col gap-2">
+        {#each newTask.subtasks as st, i}
+          <div class="flex gap-2 items-center">
+            <input bind:value={newTask.subtasks[i]} placeholder="Subtaak..." class="flex-1 p-2 border rounded-lg"/>
+            <button on:click={() => removeTaskSubtask(i)} class="bg-red-500 text-white px-3 py-1 rounded-lg">x</button>
           </div>
         {/each}
-        <button class="bg-blue-500 text-white px-3 py-1 rounded-lg hover:bg-blue-600" on:click={addPoolSubtask}>+ Subtaak</button>
-      </div>
-
-      <button class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 mt-2 self-start" on:click={savePoolTask}>Opslaan taak</button>
-    </div>
-  {/if}
-
-  <div class="flex flex-col gap-2">
-    {#each $taskPool as task}
-      <div class="bg-white p-3 rounded-xl shadow cursor-grab"
-           draggable="true"
-           on:dragstart={()=>handlePoolDragStart(task)}>
-        <div class="font-semibold">{task.title}</div>
-        <div class="text-xs font-medium text-gray-600">{task.status}</div>
-        <div class="flex gap-1 mt-1 flex-wrap">
-          {#each task.people as p}
-            <span class="bg-blue-200 text-blue-800 px-2 rounded-full text-xs">{p}</span>
-          {/each}
-        </div>
-        {#if task.subtasks?.length}
-          <ul class="mt-1 text-xs list-disc list-inside text-gray-500">
-            {#each task.subtasks as st}<li>{st}</li>{/each}
-          </ul>
+        {#if newTask.subtasks.length < 3}
+          <button on:click={addTaskSubtask} class="bg-blue-500 text-white px-3 py-1 rounded-lg">+ Subtaak</button>
         {/if}
       </div>
-    {/each}
+
+      <div class="flex justify-end gap-2 mt-4">
+        <button on:click={()=>showModal=false} class="bg-gray-400 text-white px-4 py-2 rounded-lg">Annuleren</button>
+        {#if modalData.editing}
+          <button on:click={deleteTask} class="bg-red-600 text-white px-4 py-2 rounded-lg">Verwijderen</button>
+        {/if}
+        <button on:click={saveTask} class="bg-blue-500 text-white px-4 py-2 rounded-lg">Opslaan</button>
+      </div>
+    </div>
   </div>
-</div>
+{/if}
+
+<!-- =========================
+     Task Pool
+========================= -->
+<TaskPool {tasks} {peopleOptions} on:unscheduleTask={(e)=>unscheduleTask(e.detail)} />
