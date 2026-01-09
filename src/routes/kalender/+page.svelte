@@ -39,14 +39,13 @@
     za: 'bg-gradient-to-br from-indigo-500 to-purple-500',
     zo: 'bg-gradient-to-br from-purple-500 to-pink-500',
   };
-
-  let currentDate = new Date();
+let currentDate = new Date();
   let weekDays = [];
   let monthName;
 
   function getStartOfWeek(date){
     const day = date.getDay();
-    const diff = (day === 0 ? -6 : 1) - day;
+    const diff = (day === 0 ? -6 : 1) - day; // Monday as first day
     const monday = new Date(date);
     monday.setDate(date.getDate() + diff);
     return monday;
@@ -55,7 +54,7 @@
   function updateWeekDays(){
     const start = getStartOfWeek(currentDate);
     weekDays = [];
-    for (let i=0; i<7; i++){
+    for (let i = 0; i < 7; i++){
       const d = new Date(start);
       d.setDate(start.getDate() + i);
       weekDays.push({
@@ -66,22 +65,28 @@
     }
   }
 
-  function prevWeek(){ currentDate.setDate(currentDate.getDate() - 7); updateWeekDays(); }
-  function nextWeek(){ currentDate.setDate(currentDate.getDate() + 7); updateWeekDays(); }
+  function prevWeek(){
+    currentDate = new Date(currentDate.setDate(currentDate.getDate() - 7)); // <-- reassign
+    updateWeekDays();
+  }
+
+  function nextWeek(){
+    currentDate = new Date(currentDate.setDate(currentDate.getDate() + 7)); // <-- reassign
+    updateWeekDays();
+  }
 
   $: {
     const start = getStartOfWeek(currentDate);
     const end = new Date(start);
     end.setDate(start.getDate() + 6);
-
+    
     const startMonth = start.toLocaleDateString('nl-NL', { month: 'long', year: 'numeric' });
     const endMonth = end.toLocaleDateString('nl-NL', { month: 'long', year: 'numeric' });
-
+    
     monthName = startMonth === endMonth ? startMonth : `${startMonth} – ${endMonth}`;
   }
 
-  onMount(updateWeekDays);
-
+  onMount(updateWeekDays)
   /* =========================
      Task Modal
   ========================= */
