@@ -1,50 +1,35 @@
 import { describe, it, expect } from 'vitest';
+import { load } from './routes/requests/+page.server.js';
 
-// Helper om testen simpel te houden
 const inAppointment = (timeslotId, appointments) => {
     return appointments.find(a => a.timeslotId === timeslotId);
 };
 
-describe('calendar loader', () => {
-
+describe('timeslot loader', () => {
     it('should match an appointment to a timeslot (inAppointment)', () => {
         const appointments = [
-            { id: 1, timeslotId: 3, name: 'Goofy' }
+            { id: 1, timeslotId: 2, name: 'Mickey' }
         ];
 
-        const result = inAppointment(3, appointments);
+        const result = inAppointment(2, appointments);
 
-        expect(result).toEqual({ id: 1, timeslotId: 3, name: 'Goofy' });
+        expect(result).toEqual({ id: 1, timeslotId: 2, name: 'Mickey' });
     });
 
-    it('should attach appointment to correct timeslot in calendar', async () => {
-
-        // Mock van loader data
-        const mockTimeslots = [
-            { id: 1, time: '09:00' },
-            { id: 2, time: '10:00' },
-            { id: 3, time: '11:00' }
-        ];
-
+    it('should attach appointment to correct timeslot', async () => {
         const mockAppointments = [
-            { id: 10, timeslotId: 2, name: 'Mickey' }
+            { id: 1, timeslotId: 1, name: 'Donald' },
+            { id: 2, timeslotId: 2, name: 'Mickey' }
         ];
 
-        // Simuleer wat load() normaal zou doen
-        const day = {
-            date: '2025-02-10',
-            timeslots: mockTimeslots.map(t => ({
-                ...t,
-                appointment: inAppointment(t.id, mockAppointments)
-            }))
-        };
+        const result = { scheduleToDay: mockAppointments.map(a => ({ ...a })) };
 
-        expect(day.timeslots[1].appointment.name).toBe('Mickey');
+        expect(result.scheduleToDay[1].name).toBe('Mickey');
     });
 
-    it('should set appointment undefined when none exist', () => {
+    it('should assign appointment: undefined when none exist', () => {
         const appointments = [];
-        const result = inAppointment(999, appointments);
+        const result = inAppointment(2, appointments);
         expect(result).toBeUndefined();
     });
 });
