@@ -66,15 +66,18 @@
 
       <!-- Action buttons -->
       <div class="flex space-x-2">
-        <button
+        <!-- <button
           class="flex items-center space-x-2 px-4 py-2 bg-white text-purple-600 rounded-lg shadow hover:bg-purple-50 transition text-sm font-medium">
           👦 <span>Kinderen beheren ({kinderenAantal})</span>
-        </button>
+        </button> -->
 
-        <button
-          class="flex items-center space-x-2 px-4 py-2 bg-red-500 hover:bg-red-600 rounded-lg shadow text-sm font-medium">
+            <a
+          href="http://localhost:5173/"
+          class="flex items-center space-x-2 px-4 py-2 bg-red-500 hover:bg-red-600 rounded-lg shadow text-sm font-medium"
+        >
           ⎋ <span>Uitloggen</span>
-        </button>
+        </a>
+
       </div>
 
     </div>

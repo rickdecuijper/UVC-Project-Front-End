@@ -59,9 +59,9 @@
        */
       if (mode === 'login') {
         document.cookie = `auth_token=${data.auth_token}; path=/; max-age=86400`;
-        goto('/kalender');
+        goto('/schatkaart');
       } else {
-        goto('/login');
+        goto('/schatkaart');
       }
     } catch (e) {
       error = e instanceof Error ? e.message : 'Something went wrong';
