@@ -1,9 +1,6 @@
 <script>
 	import '../app.css';
 	import favicon from '$lib/assets/favicon.svg';
-	import { page } from '$app/state';
-
-<<<<<<< HEAD
     // Dit is de correcte manier om de 'children' prop op te halen in Svelte 5.
     let { children } = $props(); 
 
@@ -22,9 +19,7 @@
     { name: 'Kalender', href: '/kalender' },
     { name: 'Avatars', href: '/avatars' }
   ];
-=======
-	let { children } = $props();
->>>>>>> 820689dd3c6af49247d4a1141b956bf8c18db296
+
 </script>
 
 <svelte:head>
@@ -32,7 +27,7 @@
 </svelte:head>
 
 <section class="flex h-screen flex-col justify-between">
-<<<<<<< HEAD
+
 <header class="bg-gradient-to-r from-purple-500 via-pink-500 to-amber-500 text-white px-6 py-4">
   <div class="flex justify-between items-center">
 
@@ -72,15 +67,18 @@
 
       <!-- Action buttons -->
       <div class="flex space-x-2">
-        <button
+        <!-- <button
           class="flex items-center space-x-2 px-4 py-2 bg-white text-purple-600 rounded-lg shadow hover:bg-purple-50 transition text-sm font-medium">
           👦 <span>Kinderen beheren ({kinderenAantal})</span>
-        </button>
+        </button> -->
 
-        <button
-          class="flex items-center space-x-2 px-4 py-2 bg-red-500 hover:bg-red-600 rounded-lg shadow text-sm font-medium">
+            <a
+          href="http://localhost:5173/"
+          class="flex items-center space-x-2 px-4 py-2 bg-red-500 hover:bg-red-600 rounded-lg shadow text-sm font-medium"
+        >
           ⎋ <span>Uitloggen</span>
-        </button>
+        </a>
+
       </div>
 
     </div>
@@ -112,25 +110,3 @@
         </footer>
 
 </section>
-=======
-	<header class="flex flex-row justify-between bg-orange-50">
-		<h1 class="p-4 text-lg">🐍 Veterinarian</h1>
-		<nav class="p-4">
-			<ul class="flex space-x-4">
-				<li><a href="/" class:font-bold={page.url.pathname === '/'}> Home </a></li>
-				<li>
-					<a href="/clients" class:font-bold={page.url.pathname === '/clients'}> Clients </a>
-				</li>
-				<li><a href="/requests" class:font-bold={page.url.pathname === '/requests'}> Requests </a></li>
-			</ul>
-		</nav>
-	</header>
-	<main>
-		{@render children?.()}
-	</main>
-
-	<footer class="">
-		<p class="p-2 text-center">Made with ❤️</p>
-	</footer>
-</section>
->>>>>>> 820689dd3c6af49247d4a1141b956bf8c18db296
