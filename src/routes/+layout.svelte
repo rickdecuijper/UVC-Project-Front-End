@@ -47,22 +47,7 @@
     <div class="flex items-center space-x-6">
 
       <!-- Navigation -->
-      <nav>
-<<<<<<< HEAD
-        <ul class="flex space-x-3 text-sm font-medium">
-          {#each navItems as item}
-            <li>
-              <a 
-                href={item.href}
-                class="px-4 py-2 rounded-full transition
-                      { $activePath === item.href.replace(#, '') ? 'bg-white text-purple-600 font-semibold shadow' : 'bg-white/20 hover:bg-white/30'}">
-                {item.name}
-              </a>
-            </li>
-          {/each}
-        </ul>
-      </nav>
-=======
+<nav>    
   <ul class="flex space-x-3 text-sm font-medium">
     {#each navItems as item}
       <li>
@@ -81,11 +66,11 @@
   </ul>
 </nav>
 
->>>>>>> 020fb11a9a74c60781524f1b082bb18d49bfd19a
+
 
       <!-- Action buttons -->
       <div class="flex space-x-2">
-        <a href={# + '/'} class="flex items-center space-x-2 px-4 py-2 bg-red-500 hover:bg-red-600 rounded-lg shadow text-sm font-medium">⎋ <span>Uitloggen</span></a>
+        <a href={base + '/'} class="flex items-center space-x-2 px-4 py-2 bg-red-500 hover:bg-red-600 rounded-lg shadow text-sm font-medium">⎋ <span>Uitloggen</span></a>
       </div>
 
     </div>
