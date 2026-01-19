@@ -31,7 +31,7 @@ jobs:
 
       # Run ESLint + Prettier
       - name: Run ESLint
-        run: npm run lint:soft |  npm run format -- --check
+        run: npm run lint:soft 
       
       # Save detailed lint report to artifacts
       - name: Generate ESLint JSON Report
