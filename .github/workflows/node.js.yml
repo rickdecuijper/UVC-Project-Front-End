@@ -66,11 +66,11 @@ jobs:
         run: |
           docker build -t svelte-app:${{ github.sha }} .
           
-      - name: Run Docker container for smoke test
+      - name: Run Docker container smoke test
         run: |
-          docker run -d -p 3000:3000 --name svelte-test svelte-app:${{ github.sha }}
-          sleep 10
-          curl -f http://localhost:3000 || exit 1
+          docker run -d -p 3000:80 --name svelte-test svelte-app:${{ github.sha }}
+          sleep 5
+          curl -f http://localhost:3000
           docker stop svelte-test
 
       - name: Deploy to Cloud Run
