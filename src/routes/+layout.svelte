@@ -15,9 +15,9 @@
   });
 
   const navItems = [
-    { name: 'Schattenjacht', href: `${base}/schatkaart` },
-    { name: 'Kalender', href: `${base}/kalender` },
-    { name: 'Avatars', href: `${base}/avatars` }
+    { name: 'Schattenjacht', href: `#/schatkaart` },
+    { name: 'Kalender', href: `#/kalender` },
+    { name: 'Avatars', href: `#/avatars` }
   ];
 
 </script>
@@ -57,7 +57,7 @@
               <a 
                 href={item.href}
                 class="px-4 py-2 rounded-full transition
-                      { $activePath === item.href.replace(base, '') ? 'bg-white text-purple-600 font-semibold shadow' : 'bg-white/20 hover:bg-white/30'}">
+                      { $activePath === item.href.replace(#, '') ? 'bg-white text-purple-600 font-semibold shadow' : 'bg-white/20 hover:bg-white/30'}">
                 {item.name}
               </a>
             </li>
@@ -67,7 +67,7 @@
 
       <!-- Action buttons -->
       <div class="flex space-x-2">
-        <a href={base + '/'} class="flex items-center space-x-2 px-4 py-2 bg-red-500 hover:bg-red-600 rounded-lg shadow text-sm font-medium">⎋ <span>Uitloggen</span></a>
+        <a href={# + '/'} class="flex items-center space-x-2 px-4 py-2 bg-red-500 hover:bg-red-600 rounded-lg shadow text-sm font-medium">⎋ <span>Uitloggen</span></a>
       </div>
 
     </div>
