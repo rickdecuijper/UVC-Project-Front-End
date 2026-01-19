@@ -12,7 +12,7 @@
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json --watch",
 		"format": "prettier --write . && eslint . --fix",
 		"lint": "eslint . || true",
-		"lint:codeSmells": "eslint . --rule 'complexity: [warn, { max: 10 }]' --rule 'sonarjs/cognitive-complexity: [warn, 15]'" || true,
+		"lint:codeSmells": "eslint . --rule 'complexity: [warn, { max: 10 }]' --rule 'sonarjs/cognitive-complexity: [warn, 15]' || true",
 		"test:unit": "vitest",
 		"test": "npm run test:unit -- --run"
 	},
