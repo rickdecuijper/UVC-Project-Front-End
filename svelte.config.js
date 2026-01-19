@@ -10,10 +10,10 @@ export default {
     adapter: adapter({
       pages: 'build',
       assets: 'build',
-      fallback: 'index.html'
+      fallback: 'null'
     }),
-    paths: {
-      base: dev || !ghPages ? '' : '/UVC-Project-Front-End'
-    }
+ //   paths: {
+ //     base: dev || !ghPages ? '' : '/UVC-Project-Front-End'
+ //   }
   }
 };
