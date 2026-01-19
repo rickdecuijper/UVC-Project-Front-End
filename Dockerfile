@@ -1,32 +1,35 @@
-FROM node:20 AS builder
+# ---------- Build stage ----------
+FROM node:20-alpine AS builder
+
 WORKDIR /app
 
-# Install dependencies
+# Copy dependency files
 COPY package*.json ./
-RUN npm ci
+
+# Install dependencies
+RUN npm install
 
 # Copy source code
 COPY . .
 
-# Build SvelteKit app
+# Build the Svelte app
 RUN npm run build
 
-# -------------------
-# Run stage
-# -------------------
-FROM node:20 AS runner
+
+# ---------- Production stage ----------
+FROM node:20-alpine
+
 WORKDIR /app
 
-# Copy built output
-COPY --from=builder /app/.svelte-kit/output ./output
-
-# Copy package.json & install only production deps
+# Install only production dependencies
 COPY package*.json ./
-RUN npm install --omit=dev
+RUN npm ci --omit=dev
 
-# Expose default SvelteKit Node port
-EXPOSE 4173
+# Copy built app from builder stage
+COPY --from=builder /app/build ./build
 
-# Start the Node server
-CMD ["node", "./output/server/app.js"]
+# Expose app port
+EXPOSE 3000
 
+# Start the app
+CMD ["node", "build"]
