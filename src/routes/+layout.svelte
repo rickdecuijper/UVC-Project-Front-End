@@ -1,5 +1,5 @@
 <script>
-	 import '../app.css';
+  import '../app.css';
   import favicon from '$lib/assets/favicon.svg';
   import { page } from '$app/stores';
   import { derived } from 'svelte/store';
@@ -7,19 +7,16 @@
 
   let { children } = $props();
 
-  // Dynamische data
-  let kinderenAantal = 3;
- const activePath = derived(page, ($page) => {
+  const activePath = derived(page, ($page) => {
     const path = $page.url.pathname;
     return path.startsWith(base) ? path.slice(base.length) || '/' : path;
   });
 
   const navItems = [
-    { name: 'Schattenjacht', href: `${base}/schatkaart` },
-    { name: 'Kalender', href: `${base}/kalender` },
-    { name: 'Avatars', href: `${base}/avatars` }
+    { name: 'Schattenjacht', path: '/schatkaart' },
+    { name: 'Kalender', path: '/kalender' },
+    { name: 'Avatars', path: '/avatars' }
   ];
-
 </script>
 
 <svelte:head>
