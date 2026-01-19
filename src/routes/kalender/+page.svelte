@@ -3,13 +3,16 @@
   import CalenderHeader from '$lib/components/calendar/CalenderHeader.svelte';
   import TaskPool from '$lib/components/calendar/TaskPool.svelte';
   import { onMount } from 'svelte';
+  // In your main calendar component or a dev-only file
+
 
   export let data;
 
   /* =========================
      Stores & State
   ========================= */
-  const tasks = writable(data.tasks || []);
+const tasks = writable(Array.isArray(data.tasks) ? data.tasks : []);
+
   const peopleOptions = ['Emma','Liam','Sophie'];
 
   const emptyTask = {
@@ -193,6 +196,11 @@ let currentDate = new Date();
     const dateObj = d instanceof Date ? d : new Date(d);
     return `${dateObj.getFullYear()}-${String(dateObj.getMonth()+1).padStart(2,'0')}-${String(dateObj.getDate()).padStart(2,'0')}`;
   }
+
+if (typeof window !== 'undefined' && import.meta.env.DEV) {
+  window.__tasks = tasks;
+}
+
 
 </script>
 
