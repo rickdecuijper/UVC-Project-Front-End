@@ -22,13 +22,23 @@ jobs:
           node-version-file: '.nvmrc'
           node-version: 20
           cache: 'npm'
-
+  
       #  Install dependencies
       - name: Install dependencies
         run: rm -rf node_modules package-lock.json | npm ci || npm install
         working-directory: .
 
-
+      - name: Build Docker image
+        run: |
+          docker build -t svelte-app:${{ github.sha }} .
+            
+      - name: Run Docker container smoke test
+        run: |
+          docker run -d -p 3000:80 --name svelte-test svelte-app:${{ github.sha }}
+          sleep 5
+          curl -f http://localhost:3000
+          docker stop svelte-test
+          
       # Run ESLint + Prettier
       - name: Run ESLint (basic)
         run: npm run lint 
@@ -62,25 +72,6 @@ jobs:
           path: coverage
           retention-days: 7
 
-      - name: Build Docker image
-        run: |
-          docker build -t svelte-app:${{ github.sha }} .
-          
-      - name: Run Docker container smoke test
-        run: |
-          docker run -d -p 3000:80 --name svelte-test svelte-app:${{ github.sha }}
-          sleep 5
-          curl -f http://localhost:3000
-          docker stop svelte-test
-
-
-      - name: Deploy to Cloud Run
-        run: |
-          gcloud run deploy svelte-app \
-            --image ghcr.io/${{ github.repository }}/svelte-app:${{ github.sha }} \
-            --region europe-west1 \
-            --platform managed
-
       #  Upload build artifact
       - name: Upload build artifact
         if: success()
@@ -89,6 +80,19 @@ jobs:
           name: svelte-build
           path: build
           retention-days: 7
+
+      # Build Svelte app
+      - name: Build project
+        run: npm run build
+        
+      # Deploy to GitHub Pages
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./build
+          user_name: "github-actions[bot]"
+          user_email: "github-actions[bot]@users.noreply.github.com"
 
       # Notify Discord on failure
       - name: Notify Discord on failure
