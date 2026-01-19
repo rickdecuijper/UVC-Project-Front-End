@@ -1,5 +1,5 @@
-# Stage 1: Build
-FROM node:20 AS builder
+FROM node:20-alpine AS builder
+
 WORKDIR /app
 
 # Copy package.json and lockfile first
@@ -14,8 +14,13 @@ COPY . .
 # Build the project
 RUN npm run build
 
+# ---------- Production stage ----------
 # Stage 2: Serve
 FROM nginx:alpine
+
+RUN rm /etc/nginx/conf.d/default.conf
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
 COPY --from=builder /app/build /usr/share/nginx/html
 
 # Optional: copy custom nginx config
