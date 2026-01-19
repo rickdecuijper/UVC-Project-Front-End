@@ -1,38 +1,66 @@
-# sv
+# How to start up the Front and Back end of this application
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+## Front End
 
-## Creating a project
-
-If you're seeing this, you've probably already done this step. Congrats!
+If you're seeing this, you are at the front end repository. Great job!
 
 ```sh
-# create a new project in the current directory
-npx sv create
+# clone the front end using your IDE
+git clone https://github.com/rickdecuijper/UVC-Project-Front-End.git
 
-# create a new project in my-app
-npx sv create my-app
-```
+# install dependencies
+npm install
 
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```sh
+# activate the front end
 npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
 ```
 
-## Building
+## Back End
 
-To create a production version of your app:
+Now navigate to the accompanying back end at https://github.com/rickdecuijper/UVC-project-Back-End
 
 ```sh
-npm run build
+# clone the back end using your IDE
+git clone https://github.com/rickdecuijper/UVC-project-Back-End.git
+
+# navigate to the code map of the appointments folder
+cd appointments/code
+
+#install dependencies
+npm install
+
+# run migrations
+npx prisma migrate dev --name init
+
+# seed data
+npx prisma db seed
+
+# activate the back end
+npm run dev
 ```
 
-You can preview the production build with `npm run preview`.
+## Avatars
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+Now that the main back end has been activated, you need to activate the avatar back end
+
+```sh
+# navigate to the code map inside the avatars folder
+cd ../../
+cd avatars/code
+
+#install dependencies
+npm install
+
+# run migrations
+npx prisma migrate dev --name init
+
+# seed data
+npx prisma db seed
+
+# activate the avatar back end
+npm run dev
+```
+
+Now you can enjoy your own copy of the Sustainable Schoolyard Task Organizer
+
+Made using Svelte
