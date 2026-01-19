@@ -85,8 +85,11 @@ jobs:
           retention-days: 7
 
       # Build Svelte app
-      - name: Build project
+      - name: Build Svelte project
         run: npm run build
+        env:
+          NODE_ENV: production
+
         
       # Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
