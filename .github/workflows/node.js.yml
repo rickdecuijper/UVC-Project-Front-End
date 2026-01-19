@@ -62,6 +62,24 @@ jobs:
           path: coverage
           retention-days: 7
 
+      - name: Build Docker image
+        run: |
+          docker build -t svelte-app:${{ github.sha }} .
+          
+      - name: Run Docker container for smoke test
+        run: |
+          docker run -d -p 3000:3000 --name svelte-test svelte-app:${{ github.sha }}
+          sleep 10
+          curl -f http://localhost:3000 || exit 1
+          docker stop svelte-test
+
+      - name: Deploy to Cloud Run
+        run: |
+          gcloud run deploy svelte-app \
+            --image ghcr.io/${{ github.repository }}/svelte-app:${{ github.sha }} \
+            --region europe-west1 \
+            --platform managed
+
       #  Upload build artifact
       - name: Upload build artifact
         if: success()
