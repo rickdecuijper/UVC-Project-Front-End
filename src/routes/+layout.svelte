@@ -1,5 +1,5 @@
 <script>
-	 import '../app.css';
+  import '../app.css';
   import favicon from '$lib/assets/favicon.svg';
   import { page } from '$app/stores';
   import { derived } from 'svelte/store';
@@ -7,19 +7,16 @@
 
   let { children } = $props();
 
-  // Dynamische data
-  let kinderenAantal = 3;
- const activePath = derived(page, ($page) => {
+  const activePath = derived(page, ($page) => {
     const path = $page.url.pathname;
     return path.startsWith(base) ? path.slice(base.length) || '/' : path;
   });
 
   const navItems = [
-    { name: 'Schattenjacht', href: `#/schatkaart` },
-    { name: 'Kalender', href: `#/kalender` },
-    { name: 'Avatars', href: `#/avatars` }
+    { name: 'Schattenjacht', path: '/schatkaart' },
+    { name: 'Kalender', path: '/kalender' },
+    { name: 'Avatars', path: '/avatars' }
   ];
-
 </script>
 
 <svelte:head>
@@ -51,6 +48,7 @@
 
       <!-- Navigation -->
       <nav>
+<<<<<<< HEAD
         <ul class="flex space-x-3 text-sm font-medium">
           {#each navItems as item}
             <li>
@@ -64,6 +62,26 @@
           {/each}
         </ul>
       </nav>
+=======
+  <ul class="flex space-x-3 text-sm font-medium">
+    {#each navItems as item}
+      <li>
+        <a
+          href={base + item.path}
+          class="px-4 py-2 rounded-full transition
+            { $activePath === item.path
+              ? 'bg-white text-purple-600 font-semibold shadow'
+              : 'bg-white/20 hover:bg-white/30'
+            }"
+        >
+          {item.name}
+        </a>
+      </li>
+    {/each}
+  </ul>
+</nav>
+
+>>>>>>> 020fb11a9a74c60781524f1b082bb18d49bfd19a
 
       <!-- Action buttons -->
       <div class="flex space-x-2">
