@@ -1,76 +1,43 @@
-import js from '@eslint/js';
-import tseslint from '@typescript-eslint/eslint-plugin';
-import tsParser from '@typescript-eslint/parser';
-import svelte from 'eslint-plugin-svelte';
-import svelteParser from 'svelte-eslint-parser';
-import tailwindcss from 'eslint-plugin-tailwindcss';
-import prettier from 'eslint-config-prettier';
+{
+	"$schema": "https://json.schemastore.org/prettierrc",
 
-export default [
-	/* Base JS */
-	js.configs.recommended,
+	"useTabs": false,
+	"tabWidth": 2,
+	"printWidth": 100,
+	"semi": true,
+	"singleQuote": true,
+	"quoteProps": "as-needed",
+	"trailingComma": "es5",
+	"bracketSpacing": true,
+	"bracketSameLine": false,
+	"arrowParens": "always",
+	"endOfLine": "lf",
 
-	/* TypeScript */
-	{
-		files: ['**/*.ts', '**/*.js'],
-		languageOptions: {
-			parser: tsParser,
-			parserOptions: {
-				project: './tsconfig.json',
-				sourceType: 'module',
-				ecmaVersion: 'latest'
+	"proseWrap": "preserve",
+	"htmlWhitespaceSensitivity": "css",
+	"embeddedLanguageFormatting": "auto",
+
+
+	"plugins": [
+		"prettier-plugin-svelte",
+		"prettier-plugin-tailwindcss"
+	],
+
+
+	"overrides": [
+		{
+			"files": "*.svelte",
+			"options": {
+				"parser": "svelte",
+				"svelteStrictMode": true,
+				"svelteAllowShorthand": true,
+				"svelteSortOrder": "options-scripts-markup-styles",
+				"svelteIndentScriptAndStyle": true
 			}
-		},
-		plugins: {
-			'@typescript-eslint': tseslint
-		},
-		rules: {
-			...tseslint.configs.recommended.rules,
-			...tseslint.configs['recommended-type-checked'].rules,
-
-			/* Professional strictness */
-			'@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
-			'@typescript-eslint/consistent-type-imports': 'error',
-			'@typescript-eslint/no-floating-promises': 'error',
-			'@typescript-eslint/no-misused-promises': 'error',
-			'@typescript-eslint/explicit-function-return-type': 'off'
 		}
-	},
+	],
 
-	/* Svelte */
-	{
-		files: ['**/*.svelte'],
-		languageOptions: {
-			parser: svelteParser,
-			parserOptions: {
-				parser: tsParser
-			}
-		},
-		plugins: {
-			svelte
-		},
-		rules: {
-			...svelte.configs.recommended.rules,
 
-			/* Svelte best practices */
-			'svelte/no-at-html-tags': 'error',
-			'svelte/valid-compile': 'error',
-			'svelte/no-unused-svelte-ignore': 'error'
-		}
-	},
-
-	/* Tailwind */
-	{
-		plugins: {
-			tailwindcss
-		},
-		rules: {
-			'tailwindcss/classnames-order': 'error',
-			'tailwindcss/no-custom-classname': 'off',
-			'tailwindcss/enforces-shorthand': 'warn'
-		}
-	},
-
-	/* Prettier (MUST BE LAST) */
-	prettier
-];
+	"tailwindConfig": "./tailwind.config.js",
+	"tailwindStylesheet": "./src/app.css"
+}
