@@ -31,7 +31,7 @@ jobs:
 
       # Run ESLint + Prettier
       - name: Run ESLint
-        run: npm run lint:soft
+        run: npm run lint:soft |  npm run format -- --check
       
       # Save detailed lint report to artifacts
       - name: Generate ESLint JSON Report
@@ -45,7 +45,7 @@ jobs:
 
       #  GitHub Annotations for ESLint
       - name: ESLint GitHub Annotations
-        run: eslint . -f github
+        run: npx eslint . -f github
 
       #  Build Svelte app
       - name: Build project
