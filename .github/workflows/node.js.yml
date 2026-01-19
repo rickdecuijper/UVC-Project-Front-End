@@ -81,6 +81,20 @@ jobs:
           path: build
           retention-days: 7
 
+      # Build Svelte app
+      - name: Build project
+        run: npm run build
+        
+      # Deploy to GitHub Pages
+      - name: Deploy to GitHub Pages
+        if: github.ref == 'refs/heads/main'
+        uses: peaceiris/actions-gh-pages@v6
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./build
+          user_name: "github-actions[bot]"
+          user_email: "github-actions[bot]@users.noreply.github.com"
+
       # Notify Discord on failure
       - name: Notify Discord on failure
         if: failure()
