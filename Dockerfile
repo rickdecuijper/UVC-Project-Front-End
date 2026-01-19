@@ -3,33 +3,25 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Copy dependency files
 COPY package*.json ./
+RUN npm ci
 
-# Install dependencies
-RUN npm install
-
-# Copy source code
 COPY . .
-
-# Build the Svelte app
 RUN npm run build
 
 
 # ---------- Production stage ----------
-FROM node:20-alpine
+FROM nginx:alpine
 
-WORKDIR /app
+# Remove default nginx config
+RUN rm /etc/nginx/conf.d/default.conf
 
-# Install only production dependencies
-COPY package*.json ./
-RUN npm ci --omit=dev
+# Add custom nginx config
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# Copy built app from builder stage
-COPY --from=builder /app/build ./build
+# Copy built files
+COPY --from=builder /app/build /usr/share/nginx/html
 
-# Expose app port
-EXPOSE 3000
+EXPOSE 80
 
-# Start the app
-CMD ["node", "build"]
+CMD ["nginx", "-g", "daemon off;"]
