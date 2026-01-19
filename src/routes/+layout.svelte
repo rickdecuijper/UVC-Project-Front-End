@@ -1,23 +1,23 @@
 <script>
-	import '../app.css';
-	import favicon from '$lib/assets/favicon.svg';
-    // Dit is de correcte manier om de 'children' prop op te halen in Svelte 5.
-    let { children } = $props(); 
-
-    import { page } from '$app/stores';
+	 import '../app.css';
+  import favicon from '$lib/assets/favicon.svg';
+  import { page } from '$app/stores';
   import { derived } from 'svelte/store';
+  import { base } from '$app/paths';
+
+  let { children } = $props();
 
   // Dynamische data
   let kinderenAantal = 3;
+ const activePath = derived(page, ($page) => {
+    const path = $page.url.pathname;
+    return path.startsWith(base) ? path.slice(base.length) || '/' : path;
+  });
 
-  // Active page (from SvelteKit page store)
-  const activePath = derived(page, ($page) => $page.url.pathname);
-
-  // Navigation items
   const navItems = [
-    { name: 'Schattenjacht', href: '/schatkaart' },
-    { name: 'Kalender', href: '/kalender' },
-    { name: 'Avatars', href: '/avatars' }
+    { name: 'Schattenjacht', href: `${base}/schatkaart` },
+    { name: 'Kalender', href: `${base}/kalender` },
+    { name: 'Avatars', href: `${base}/avatars` }
   ];
 
 </script>
@@ -57,7 +57,7 @@
               <a 
                 href={item.href}
                 class="px-4 py-2 rounded-full transition
-                      { $activePath === item.href ? 'bg-white text-purple-600 font-semibold shadow' : 'bg-white/20 hover:bg-white/30'}">
+                      { $activePath === item.href.replace(base, '') ? 'bg-white text-purple-600 font-semibold shadow' : 'bg-white/20 hover:bg-white/30'}">
                 {item.name}
               </a>
             </li>
@@ -67,18 +67,7 @@
 
       <!-- Action buttons -->
       <div class="flex space-x-2">
-        <!-- <button
-          class="flex items-center space-x-2 px-4 py-2 bg-white text-purple-600 rounded-lg shadow hover:bg-purple-50 transition text-sm font-medium">
-          👦 <span>Kinderen beheren ({kinderenAantal})</span>
-        </button> -->
-
-            <a
-          href="http://localhost:5173/"
-          class="flex items-center space-x-2 px-4 py-2 bg-red-500 hover:bg-red-600 rounded-lg shadow text-sm font-medium"
-        >
-          ⎋ <span>Uitloggen</span>
-        </a>
-
+        <a href={base + '/'} class="flex items-center space-x-2 px-4 py-2 bg-red-500 hover:bg-red-600 rounded-lg shadow text-sm font-medium">⎋ <span>Uitloggen</span></a>
       </div>
 
     </div>

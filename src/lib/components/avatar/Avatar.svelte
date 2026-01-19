@@ -2,10 +2,12 @@
     export let huid = "#FFDBAC";
     export let haarVorm = "kort";
     export let haarKleur = "#442200";
-    export let kleding = "";
-    export let extra = "";
+    export let kleding = "shirt_basis.png";
+    export let extra = "jas_arts.png";
 
-    const pad = "/img/";
+    import { base } from "$app/paths";
+
+const pad = `${base}/img/`;
 </script>
 
 <div class="avatar-master-container">
