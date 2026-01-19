@@ -73,6 +73,7 @@ jobs:
           curl -f http://localhost:3000
           docker stop svelte-test
 
+
       - name: Deploy to Cloud Run
         run: |
           gcloud run deploy svelte-app \
