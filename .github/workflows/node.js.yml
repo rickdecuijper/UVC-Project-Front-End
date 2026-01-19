@@ -22,10 +22,13 @@ jobs:
           node-version-file: '.nvmrc'
           node-version: 20
           cache: 'npm'
+          
+      - name: debug
+        run: ls
 
       # 3️⃣ Install dependencies
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
       # 4️⃣ Run ESLint + Prettier
       - name: Run ESLint
