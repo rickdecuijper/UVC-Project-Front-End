@@ -30,8 +30,11 @@ jobs:
 
 
       # Run ESLint + Prettier
-      - name: Run ESLint
-        run: npm run lint:soft 
+      - name: Run ESLint (basic)
+        run: npm run lint 
+
+      - name: Run ESLint (code smells + cyclomatic complexity)
+        run: npm run lint:codeSmells
       
       # Save detailed lint report to artifacts
       - name: Generate ESLint JSON Report
