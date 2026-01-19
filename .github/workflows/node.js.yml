@@ -11,11 +11,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout repository
+      #  Checkout repository
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 2️⃣ Set up Node.js
+      #  Set up Node.js
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
@@ -23,29 +23,39 @@ jobs:
           node-version: 20
           cache: 'npm'
 
-      # 3️⃣ Install dependencies
+      #  Install dependencies
       - name: Install dependencies
         run: npm ci || npm install
         working-directory: .
 
 
-      # 4️⃣ Run ESLint + Prettier
+      # Run ESLint + Prettier
       - name: Run ESLint
-        run: npm run lint
+        run: npm run lint 
+      
+      # Save detailed lint report to artifacts
+      - name: Generate ESLint JSON Report
+        run: npx eslint . -f json -o eslint-report.json || true
+      
+      - name: Upload ESLint Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: eslint-report
+          path: eslint-report.json
 
-      # 5️⃣ GitHub Annotations for ESLint
+      #  GitHub Annotations for ESLint
       - name: ESLint GitHub Annotations
         run: eslint . -f github
 
-      # 6️⃣ Build Svelte app
+      #  Build Svelte app
       - name: Build project
         run: npm run build
 
-      # 7️⃣ Run unit tests with coverage
+      #  Run unit tests with coverage
       - name: Run tests with coverage
         run: npm run test -- --coverage
 
-      # 8️⃣ Upload coverage artifact
+      #  Upload coverage artifact
       - name: Upload coverage report
         uses: actions/upload-artifact@v4
         with:
@@ -53,7 +63,7 @@ jobs:
           path: coverage
           retention-days: 7
 
-      # 9️⃣ Upload build artifact
+      #  Upload build artifact
       - name: Upload build artifact
         if: success()
         uses: actions/upload-artifact@v4
@@ -62,7 +72,7 @@ jobs:
           path: build
           retention-days: 7
 
-      # 🔟 Notify Discord on failure
+      # Notify Discord on failure
       - name: Notify Discord on failure
         if: failure()
         run: |
