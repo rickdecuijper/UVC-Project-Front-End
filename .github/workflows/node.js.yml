@@ -5,45 +5,69 @@ on:
     branches: ["main"]
   pull_request:
     branches: ["main"]
-
+    
+permissions:
+  contents: write
+  
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout repository
+      #  Checkout repository
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 2️⃣ Set up Node.js
+      #  Set up Node.js
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version-file: '.nvmrc'
           node-version: 20
           cache: 'npm'
-
-      # 3️⃣ Install dependencies
+  
+      #  Install dependencies
       - name: Install dependencies
-        run: npm ci
+        run: rm -rf node_modules package-lock.json | npm ci || npm install
+        working-directory: .
 
-      # 4️⃣ Run ESLint + Prettier
-      - name: Run ESLint
-        run: npm run lint
+      - name: Build Docker image
+        run: |
+          docker build -t svelte-app:${{ github.sha }} .
+            
+      - name: Run Docker container smoke test
+        run: |
+          docker run -d -p 3000:80 --name svelte-test svelte-app:${{ github.sha }}
+          sleep 5
+          curl -f http://localhost:3000
+          docker stop svelte-test
+          
+      # Run ESLint + Prettier
+      - name: Run ESLint (basic)
+        run: npm run lint 
 
-      # 5️⃣ GitHub Annotations for ESLint
-      - name: ESLint GitHub Annotations
-        run: eslint . -f github
+      - name: Run ESLint (code smells + cyclomatic complexity)
+        run: npm run lint:codeSmells
+      
+      # Save detailed lint report to artifacts
+      - name: Generate ESLint JSON Report
+        run: npx eslint . -f json -o eslint-report.json || true
+      
+      - name: Upload ESLint Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: eslint-report
+          path: eslint-report.json
 
-      # 6️⃣ Build Svelte app
+      #  Build Svelte app
       - name: Build project
         run: npm run build
 
-      # 7️⃣ Run unit tests with coverage
+      #  Run unit tests with coverage
       - name: Run tests with coverage
         run: npm run test -- --coverage
 
-      # 8️⃣ Upload coverage artifact
+      #  Upload coverage artifact
       - name: Upload coverage report
         uses: actions/upload-artifact@v4
         with:
@@ -51,7 +75,7 @@ jobs:
           path: coverage
           retention-days: 7
 
-      # 9️⃣ Upload build artifact
+      #  Upload build artifact
       - name: Upload build artifact
         if: success()
         uses: actions/upload-artifact@v4
@@ -60,7 +84,23 @@ jobs:
           path: build
           retention-days: 7
 
-      # 🔟 Notify Discord on failure
+      # Build Svelte app
+      - name: Build Svelte project
+        run: npm run build
+        env:
+          NODE_ENV: production
+
+        
+      # Deploy to GitHub Pages
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./build
+          user_name: "github-actions[bot]"
+          user_email: "github-actions[bot]@users.noreply.github.com"
+
+      # Notify Discord on failure
       - name: Notify Discord on failure
         if: failure()
         run: |

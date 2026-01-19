@@ -1,16 +1,43 @@
 {
-	"useTabs": true,
-	"singleQuote": true,
-	"trailingComma": "none",
+	"$schema": "https://json.schemastore.org/prettierrc",
+
+	"useTabs": false,
+	"tabWidth": 2,
 	"printWidth": 100,
-	"plugins": ["prettier-plugin-svelte", "prettier-plugin-tailwindcss"],
+	"semi": true,
+	"singleQuote": true,
+	"quoteProps": "as-needed",
+	"trailingComma": "es5",
+	"bracketSpacing": true,
+	"bracketSameLine": false,
+	"arrowParens": "always",
+	"endOfLine": "lf",
+
+	"proseWrap": "preserve",
+	"htmlWhitespaceSensitivity": "css",
+	"embeddedLanguageFormatting": "auto",
+
+
+	"plugins": [
+		"prettier-plugin-svelte",
+		"prettier-plugin-tailwindcss"
+	],
+
+
 	"overrides": [
 		{
 			"files": "*.svelte",
 			"options": {
-				"parser": "svelte"
+				"parser": "svelte",
+				"svelteStrictMode": true,
+				"svelteAllowShorthand": true,
+				"svelteSortOrder": "options-scripts-markup-styles",
+				"svelteIndentScriptAndStyle": true
 			}
 		}
 	],
+
+
+	"tailwindConfig": "./tailwind.config.js",
 	"tailwindStylesheet": "./src/app.css"
 }
