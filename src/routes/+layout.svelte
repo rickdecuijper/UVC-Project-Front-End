@@ -48,19 +48,24 @@
 
       <!-- Navigation -->
       <nav>
-        <ul class="flex space-x-3 text-sm font-medium">
-          {#each navItems as item}
-            <li>
-              <a 
-                href={item.href}
-                class="px-4 py-2 rounded-full transition
-                      { $activePath === item.href.replace(base, '') ? 'bg-white text-purple-600 font-semibold shadow' : 'bg-white/20 hover:bg-white/30'}">
-                {item.name}
-              </a>
-            </li>
-          {/each}
-        </ul>
-      </nav>
+  <ul class="flex space-x-3 text-sm font-medium">
+    {#each navItems as item}
+      <li>
+        <a
+          href={base + item.path}
+          class="px-4 py-2 rounded-full transition
+            { $activePath === item.path
+              ? 'bg-white text-purple-600 font-semibold shadow'
+              : 'bg-white/20 hover:bg-white/30'
+            }"
+        >
+          {item.name}
+        </a>
+      </li>
+    {/each}
+  </ul>
+</nav>
+
 
       <!-- Action buttons -->
       <div class="flex space-x-2">
