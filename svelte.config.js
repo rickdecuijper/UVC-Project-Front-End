@@ -12,8 +12,8 @@ export default {
       assets: 'build',
       fallback: 'null'
     }),
- //   paths: {
- //     base: dev || !ghPages ? '' : '/UVC-Project-Front-End'
- //   }
+     paths: {
+      base: dev ? '' : '/UVC-Project-Front-End'
+    }
   }
 };
