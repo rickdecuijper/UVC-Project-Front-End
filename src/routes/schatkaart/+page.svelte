@@ -2,6 +2,7 @@
     import { onMount } from 'svelte';
     import VoortgangsHeader from '$lib/components/schatkaart/VoortgangsHeader.svelte';
     import MissiePunt from '$lib/components/schatkaart/MissiePunt.svelte';
+    import { base } from '$app/paths';
 
     const DEFAULT_MISSIES = [
         { id: 1, naam: "Zandbak harken", status: "Nog niet gedaan", locatie: { top: '30%', left: '20%' }, beschrijving: "Zandbak harken en schoonmaken." },
@@ -22,9 +23,11 @@
         { x: 90, y: 95 }
     ];
 
+
     const MISSIES_KEY = 'schatkaartMissies';
     const BG_KEY = 'schatkaart-bg-url';
-    const DEFAULT_BG = '/img/jouw-speeltuin-kaart.jpg';
+    const DEFAULT_BG = `${base}/img/jouw-speeltuin-kaart.jpg`;
+
 
     let missies = DEFAULT_MISSIES;
     let openMissieId = null;

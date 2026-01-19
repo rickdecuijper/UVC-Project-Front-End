@@ -1,6 +1,6 @@
 /** @type {import('./$types').PageServerLoad} */
 export async function load() {
-  await new Promise((r) => setTimeout(r, 200));
+  await new Promise((r) => setTimeout(r, 1));
 
   const today = new Date();
 
