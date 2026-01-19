@@ -5,26 +5,21 @@ import svelte from "eslint-plugin-svelte";
 import globals from "globals";
 import { fileURLToPath } from "node:url";
 import svelteConfig from "./svelte.config.js";
+import sonarjs from "eslint-plugin-sonarjs";
 
 const gitignorePath = fileURLToPath(new URL("./.gitignore", import.meta.url));
 
-/** @type {import('eslint').Linter.Config[]} */
 export default [
   includeIgnoreFile(gitignorePath),
 
   js.configs.recommended,
   ...svelte.configs.recommended,
-
-  // Disable rules conflicting with Prettier
   prettier,
   ...svelte.configs.prettier,
 
   {
-    languageOptions: {
-      globals: { ...globals.browser, ...globals.node }
-    },
+    languageOptions: { globals: { ...globals.browser, ...globals.node } },
     rules: {
-      // --- Strict JS rules ---
       "no-unused-vars": ["error", { argsIgnorePattern: "^_", varsIgnorePattern: "^_" }],
       "no-undef": "error",
       "no-console": ["error", { allow: ["warn", "error"] }],
@@ -37,19 +32,12 @@ export default [
       "object-shorthand": "error",
       "no-nested-ternary": "error",
       "no-unneeded-ternary": "error",
-    
-      // --- Strict Svelte rules ---
+
       "svelte/require-each-key": "error",
       "svelte/no-at-html-tags": "error",
       "svelte/no-unused-svelte-ignore": "error",
       "svelte/no-useless-mustaches": "error",
-      "svelte/first-attribute-linebreak": [
-        "error",
-        {
-          multiline: "below",
-          singleline: "below"
-        }
-      ],
+      "svelte/first-attribute-linebreak": ["error", { multiline: "below", singleline: "below" }],
       "svelte/no-inner-declarations": "error",
       "svelte/valid-compile": "error",
       "svelte/no-ignored-unsubscribe": "error",
@@ -59,8 +47,16 @@ export default [
 
   {
     files: ["**/*.svelte", "**/*.svelte.js"],
-    languageOptions: {
-      parserOptions: { svelteConfig }
+    languageOptions: { parserOptions: { svelteConfig } }
+  },
+
+  // SonarJS for code smells + complexity
+  {
+    plugins: { sonarjs },
+    rules: {
+      ...sonarjs.configs.recommended.rules,
+      complexity: ["warn", { max: 33 }],
+      "sonarjs/cognitive-complexity": ["warn", 33]
     }
   }
 ];
