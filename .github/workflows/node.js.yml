@@ -90,6 +90,9 @@ jobs:
         env:
           NODE_ENV: production
 
+      # 404 error handeling
+      - name: Add 404 fallback
+        run: cp build/index.html build/404.html
         
       # Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
