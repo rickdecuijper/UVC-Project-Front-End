@@ -13,9 +13,9 @@
   });
 
   const navItems = [
-    { name: 'Schattenjacht', path: '/schatkaart' },
-    { name: 'Kalender', path: '/kalender' },
-    { name: 'Avatars', path: '/avatars' }
+    { name: 'Schattenjacht' ,`${base}/schatkaart` },
+    { name: 'Kalender', `${base}/kalender` },
+    { name: 'Avatars', `${base}/avatars` }
   ];
 </script>
 
