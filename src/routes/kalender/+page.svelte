@@ -4,9 +4,7 @@
   import TaskPool from '$lib/components/calendar/TaskPool.svelte';
   import { onMount } from 'svelte';
   // In your main calendar component or a dev-only file
-
-
-  export let data;
+  // export let data;
 
   /* =========================
      Stores & State
