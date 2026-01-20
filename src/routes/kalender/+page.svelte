@@ -4,14 +4,35 @@
   import TaskPool from '$lib/components/calendar/TaskPool.svelte';
   import { onMount } from 'svelte';
   // In your main calendar component or a dev-only file
-
-
   export let data;
 
   /* =========================
      Stores & State
   ========================= */
-const tasks = writable(Array.isArray(data.tasks) ? data.tasks : []);
+/* const tasks = writable(Array.isArray(data.tasks) ? data.tasks : []); */
+
+const tasks = writable([
+  {
+    id: crypto.randomUUID(),
+    title: 'Afval rapen op schoolplein',
+    description: 'Losliggend afval verzamelen op het hele schoolplein',
+    subtasks: ['Handschoenen uitdelen', 'Vuilniszakken pakken', 'Afval scheiden'],
+    status: 'Nog niet gestart',
+    people: ['Emma'],
+    date: null,
+    time: null
+  },
+  {
+    id: crypto.randomUUID(),
+    title: 'Speeltoestellen schoonmaken',
+    description: 'Reinigen van schommels en klimrekken',
+    subtasks: ['Emmers vullen', 'Schoonmaakmiddel gebruiken'],
+    status: 'Nog niet gestart',
+    people: ['Sophie'],
+    date: null,
+    time: null
+  }
+]);
 
   const peopleOptions = ['Emma','Liam','Sophie'];
 

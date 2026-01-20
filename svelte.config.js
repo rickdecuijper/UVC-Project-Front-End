@@ -10,7 +10,6 @@ export default {
       assets: 'build',
       fallback: 'index.html'
     }),
-
     paths: {
       base: '/UVC-Project-Front-End'
     }

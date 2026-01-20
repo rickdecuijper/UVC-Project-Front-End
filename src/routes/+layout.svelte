@@ -47,7 +47,7 @@
     <div class="flex items-center space-x-6">
 
       <!-- Navigation -->
-      <nav>
+<nav>    
   <ul class="flex space-x-3 text-sm font-medium">
     {#each navItems as item}
       <li>
@@ -65,6 +65,7 @@
     {/each}
   </ul>
 </nav>
+
 
 
       <!-- Action buttons -->
