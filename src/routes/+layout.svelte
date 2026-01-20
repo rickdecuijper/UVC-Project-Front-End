@@ -12,11 +12,11 @@
     return path.startsWith(base) ? path.slice(base.length) || '/' : path;
   });
 
-const navItems = [
-  { name: 'Schattenjacht', href: `${base}/schatkaart` },
-  { name: 'Kalender', href: `${base}/kalender` },
-  { name: 'Avatars', href: `${base}/avatars` }
-];
+  const navItems = [
+    { name: 'Schattenjacht', path: '/schatkaart' },
+    { name: 'Kalender', path: '/kalender' },
+    { name: 'Avatars', path: '/avatars' }
+  ];
 </script>
 
 <svelte:head>
